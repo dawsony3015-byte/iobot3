@@ -1,0 +1,4 @@
+# Pipeline (runs in GitHub Actions). Each one earns its place:
+icalendar==7.3.0     # reads the iCal feed, including folded lines and escaped commas
+requests==2.34.2     # downloads with timeouts and headers
+pdfplumber==0.11.10  # pulls text out of the daily bulletin PDF

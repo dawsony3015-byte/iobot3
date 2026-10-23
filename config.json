@@ -1,0 +1,13 @@
+{
+  "feeds": {
+    "production": "",
+    "test": "",
+    "labels": ""
+  },
+  "active_feed": "production",
+  "bulletin_url": "https://www.iolani.org/uploaded/PDF/DAILY_BULLETIN.pdf",
+  "fixture_calendar": "fixtures/school-calendar.ics",
+  "fixture_bulletins": "fixtures/bulletins",
+  "recent_bulletins": 10,
+  "club_mentions_kept": 20
+}
