@@ -120,6 +120,8 @@ def run(state_dir, schedule, offline=False, site_data=SITE_DATA):
         'date': today, 'generated_at': iso_now(), 'posted': todays is not None, 'error': error,
         'bulletin': public(todays) if todays else None,
         'check': check_against_feed(todays, schedule['days'].get(today)) if todays else None,
+        # Which days have a saved bulletin, so the site never asks for one that doesn't exist.
+        'archived': sorted(records),
     })
 
     recent = [d for d in records if d <= today][-CONFIG['recent_bulletins']:]

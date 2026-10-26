@@ -4,7 +4,7 @@
  * names, and that day's lunch and bulletin if the bulletin was archived.
  */
 
-import { data, load } from '../data.js';
+import { bulletinFor, data } from '../data.js';
 import { fill, h, icon } from '../dom.js';
 import { clock, dateText, relativeDay, rotationText } from '../format.js';
 import { dayRecord, dayTitle, isClassDay } from '../schedule.js';
@@ -38,7 +38,7 @@ export function render(root, { route, settings }) {
     h('section', { class: 'section', 'aria-labelledby': 'bulletin-h' },
       h('div', { class: 'section-head' }, h('h2', { class: 'label', id: 'bulletin-h' }, 'Daily bulletin')), bulletin));
 
-  load(`data/bulletins/${date}.json`).then((b) => {
+  bulletinFor(date).then((b) => {
     if (bulletin.isConnected) fill(bulletin, bulletinParts(b, date, now));
   });
 }

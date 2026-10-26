@@ -8,7 +8,7 @@
  */
 
 import { runFrames } from '../countdown.js';
-import { data, load } from '../data.js';
+import { bulletinFor, data } from '../data.js';
 import { fill, h } from '../dom.js';
 import { ago, clock, clockAt, dateText, ordinal } from '../format.js';
 import { dayTitle, isClassDay, statusAt, wagonFreePeriod } from '../schedule.js';
@@ -122,11 +122,6 @@ function header(status, settings) {
 }
 
 /* ---- Lunch ---------------------------------------------------------------- */
-
-async function bulletinFor(date) {
-  if (data.today?.date === date) return data.today.posted ? data.today.bulletin : null;
-  return load(`data/bulletins/${date}.json`);
-}
 
 function lunchRows(bulletin, day, date, settings) {
   if (!bulletin) {

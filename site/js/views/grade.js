@@ -5,7 +5,7 @@
  * including range headings like "GRS 9-11".
  */
 
-import { data, load } from '../data.js';
+import { bulletinFor, data, load } from '../data.js';
 import { fill, h } from '../dom.js';
 import { clock, dateText, relativeDay } from '../format.js';
 import { dayTitle } from '../schedule.js';
@@ -23,6 +23,7 @@ export function render(root, { route, settings }) {
   }
   const now = today();
   const announcements = h('div', {}, h('p', { class: 'empty' }, 'Loading announcements…'));
+  const lines = h('div', {});
   const makeMine = h('button', { class: 'btn', type: 'button', onclick: () => update({ grade }) }, `Make grade ${grade} my grade`);
 
   fill(root,
@@ -34,11 +35,14 @@ export function render(root, { route, settings }) {
     h('section', { class: 'section', 'aria-labelledby': 'chapel-h' },
       h('div', { class: 'section-head' }, h('h2', { class: 'label', id: 'chapel-h' }, 'Chapel, next two weeks')),
       chapelDays(grade, now)),
-    todaysLines(grade),
+    lines,
     h('section', { class: 'section', 'aria-labelledby': 'ann-h' },
       h('div', { class: 'section-head' }, h('h2', { class: 'label', id: 'ann-h' }, 'Announcements')),
       announcements));
 
+  bulletinFor(now).then((bulletin) => {
+    if (lines.isConnected) fill(lines, todaysLines(bulletin, grade));
+  });
   load('data/announcements.json').then((archive) => {
     if (!announcements.isConnected) return;
     const items = (archive?.items || []).filter((i) => !i.everyone && i.grades.includes(grade)).slice(0, 30);
@@ -62,8 +66,7 @@ function chapelDays(grade, now) {
   return rows.length ? h('ul', { class: 'plain-list' }, rows) : h('p', { class: 'empty' }, `No chapel for grade ${grade} in the next two weeks.`);
 }
 
-function todaysLines(grade) {
-  const bulletin = data.today?.posted ? data.today.bulletin : null;
+function todaysLines(bulletin, grade) {
   if (!bulletin) return null;
   const lines = bulletin.schedule.filter((s) => s.grades.includes(grade));
   if (!lines.length) return null;

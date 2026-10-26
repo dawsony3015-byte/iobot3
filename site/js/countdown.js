@@ -42,6 +42,7 @@ export class Countdown {
         }
       }
       this.text = text;
+      this.el.dataset.text = text; // the plain value, for tests and debugging
     }
     this.el.classList.toggle('is-long', text.length > 5);
     this.el.classList.toggle('is-final', seconds <= 60);

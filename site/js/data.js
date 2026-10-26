@@ -98,3 +98,11 @@ export function startAutoRefresh() {
     for (const fn of listeners) fn([]);
   });
 }
+
+/* The bulletin for a date: today.json's copy for today, otherwise the archive
+   (which is also how demo mode shows an old day's lunch). */
+export function bulletinFor(date) {
+  if (data.today?.date === date) return Promise.resolve(data.today.posted ? data.today.bulletin : null);
+  if (!data.today?.archived?.includes(date)) return Promise.resolve(null);
+  return load(`data/bulletins/${date}.json`);
+}

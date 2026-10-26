@@ -36,6 +36,7 @@ def test_todays_bulletin_is_published(folders, monkeypatch):
     assert today['bulletin']['food']['wagon'] == 'Bi Bim Bap'
     assert today['check']['agrees'] is True
     assert (state / 'archive' / 'bulletins' / '2026-10-23.json').exists()
+    assert today['archived'] == ['2026-10-23']
 
 
 def test_yesterdays_bulletin_is_not_shown_as_today(folders, monkeypatch):
