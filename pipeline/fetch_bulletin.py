@@ -18,6 +18,7 @@ import requests
 from pdfplumber.utils.exceptions import PdfminerException
 
 from .bulletin_parse import parse_bulletin
+from .clubs import club_id, is_club_section
 from .config import CONFIG, ROOT, SITE_DATA, iso_now, now_hst, read_json, school_year_start, write_json
 from .fetch import download
 
@@ -63,12 +64,14 @@ def import_fixtures(archive_dir, today):
 def public(record):
     """What the site needs from an archived bulletin (no raw text, no hashes)."""
     items = [{'section': s['heading'], 'title': e['title'], 'text': e['text'],
-              'grades': e['grades'], 'everyone': s['everyone']}
+              'grades': e['grades'], 'everyone': s['everyone'],
+              'club': club_id(e['title']) if e['title'] and is_club_section(s) else None}
              for s in record['sections'] for e in s['entries']]
+    schedule = [{**item, 'club': club_id(item['club']) if item['club'] else None} for item in record['schedule']]
     return {'date': record['date'], 'first_seen_at': record['first_seen_at'],
             'updated_at': record['updated_at'], 'us_schedule': record['us_schedule'],
-            'food': record['food'], 'schedule': record['schedule'], 'items': items,
-            'clubs': sorted({m['key'] for m in record['clubs']})}
+            'food': record['food'], 'schedule': schedule, 'items': items,
+            'clubs': sorted({club_id(m['key']) for m in record['clubs']})}
 
 
 def check_against_feed(record, day):
@@ -124,7 +127,7 @@ def run(state_dir, schedule, offline=False, site_data=SITE_DATA):
         'dates': recent,
         'first_archived': min(records) if records else None,
         'items': [{'date': d, **item} for d in recent for item in public(records[d])['items']],
-        'schedule': [{'date': d, **item} for d in recent for item in records[d]['schedule']],
+        'schedule': [{'date': d, **item} for d in recent for item in public(records[d])['schedule']],
     })
     print(f'bulletins: {len(records)} archived, today posted={todays is not None}')
     return records

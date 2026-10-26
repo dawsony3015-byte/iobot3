@@ -9,7 +9,7 @@ import datetime as dt
 import re
 
 from .grades import as_list
-from .textnorm import clean, search_key, title_case
+from .textnorm import clean, search_key, slug, title_case
 
 # A grade tag at the end of a club name: "7-12", "(GRS 7-12)", "GRS 9-12", "(9)".
 TAG = re.compile(r'\s*(\((?:GRS?\.?\s*)?\d{1,2}(?:\s*[-–&/]\s*\d{1,2})?\)'
@@ -53,9 +53,15 @@ def club_key(name):
     return re.sub(r'\s+', ' ', key).strip(' :')
 
 
+def club_id(name):
+    """The id used in URLs and file names: 'CHESS CLUB 7-12' -> 'chess-club'."""
+    return slug(club_key(name))
+
+
 def display_name(name):
     """Keep the school's own mixed case; tidy ALL CAPS ('`IOLANI ...' -> 'ʻIolani ...')."""
-    return title_case(split_tag(name)[0])
+    name = re.sub(r'\s+(?:Mtgs?|Meetings?)\.?$', '', split_tag(name)[0], flags=re.I)
+    return title_case(name)
 
 
 def club_in_schedule_title(title):
@@ -142,11 +148,16 @@ def _sentence(text, position):
     return sentence if len(sentence) <= 160 else sentence[:157].rstrip() + '…'
 
 
+def is_club_section(section):
+    """ORGANIZATIONS (and any heading with CLUB in it) holds one club per entry."""
+    return bool(re.search(r'ORGANIZATION|CLUB', section['heading'], re.I))
+
+
 def club_mentions(sections, schedule, bulletin_date):
     """Every club mention in one bulletin: ORGANIZATIONS entries and club lines in TODAY'S SCHEDULE."""
     mentions = []
     for section in sections:
-        if not re.search(r'ORGANIZATION|CLUB', section['heading'], re.I):
+        if not is_club_section(section):
             continue
         for entry in section['entries']:
             if not entry['title']:

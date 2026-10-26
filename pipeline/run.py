@@ -11,7 +11,7 @@ import argparse
 import os
 from pathlib import Path
 
-from . import fetch_bulletin, fetch_calendar
+from . import build_indexes, fetch_bulletin, fetch_calendar
 from .config import ROOT
 
 
@@ -25,6 +25,7 @@ def main():
 
     schedule = fetch_calendar.run(args.state, args.feed, args.offline)
     fetch_bulletin.run(args.state, schedule, args.offline)
+    build_indexes.run(args.state)
 
 
 if __name__ == '__main__':
