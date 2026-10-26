@@ -205,7 +205,8 @@ def _entry(section, raw):
     grades = set(section['grades']) | tag_grades(tag)
     if not section['everyone']:
         grades |= grades_in(f'{title} {body}')
-    return {'title': title_case(title), 'text': body, 'grades': as_list(grades)}
+    # The grade tag is kept as numbers in `grades`, so the title doesn't repeat it.
+    return {'title': title_case(name), 'text': body, 'grades': as_list(grades)}
 
 
 def parse_bulletin(text):

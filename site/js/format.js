@@ -87,3 +87,10 @@ export function ordinal(n) {
   const suffix = n % 100 >= 11 && n % 100 <= 13 ? 'th' : ({ 1: 'st', 2: 'nd', 3: 'rd' }[n % 10] || 'th');
   return `${n}${suffix}`;
 }
+
+/* 'today', 'yesterday', or 'Oct 2 (24 days ago)'. */
+export function daysAgoText(date, from) {
+  const n = daysBetween(date, from);
+  if (n <= 1) return relativeDay(date, from);
+  return `${dateText(date, 'noWeekday')} (${n} days ago)`;
+}

@@ -10,13 +10,12 @@
 import { runFrames } from '../countdown.js';
 import { data, load } from '../data.js';
 import { fill, h } from '../dom.js';
-import { ago, clock, clockAt, dateText, gradesText, ordinal } from '../format.js';
+import { ago, clock, clockAt, dateText, ordinal } from '../format.js';
 import { dayTitle, isClassDay, statusAt, wagonFreePeriod } from '../schedule.js';
 import { demo, hst, now, weekday } from '../time.js';
+import { announcement, chapelText, foodList, tile as dayTile } from './day-parts.js';
 import { NowCard } from './now.js';
 import { markTimeline, timeline } from './timeline.js';
-
-const FOOD = [['wagon', 'One Team Wagon'], ['dining_hall', 'ASC Dining Hall'], ['snack_bar', 'Weinberg Snack Bar']];
 
 export function render(root, { settings }) {
   let status = statusAt(data.schedule, now());
@@ -50,6 +49,7 @@ function build(root, status, settings) {
   const parts = { card, tl, head, foodList: () => null };
   fill(root,
     staleNotice(),
+    disagreement(date),
     head.el,
     card.el,
     h('div', { class: 'today-grid' },
@@ -78,7 +78,7 @@ function build(root, status, settings) {
     if (!lunch.isConnected) return;
     fill(lunch, lunchRows(bulletin, day, date, settings));
     fill(forYou, forYouItems(bulletin, settings));
-    parts.foodList = () => foodRows(bulletin, true);
+    parts.foodList = () => foodList(bulletin, true);
     if (status.state === 'lunch') card.show(status, now(), settings, parts.foodList(), false);
   });
   return parts;
@@ -93,12 +93,8 @@ function mark(parts, status, ms) {
 
 function header(status, settings) {
   const { day, date } = status;
-  const grade = settings.grade;
-  let chapel = '';
-  if (grade && day.chapel.includes(grade)) chapel = `Chapel today, grade ${grade}`;
-  else if (!grade && day.chapel.length) chapel = `Chapel for ${gradesText(day.chapel)}`;
-
-  const tile = day.tile ? h('div', { class: `tile tile-${day.tile.length}` }, day.tile) : null;
+  const chapel = chapelText(day, settings.grade);
+  const tile = dayTile(day);
   const strip = day.rotation.map((p) => h('span', { class: 'rot-p', 'data-period': p }, p));
   const el = h('header', { class: 'day-head' },
     tile,
@@ -132,13 +128,6 @@ async function bulletinFor(date) {
   return load(`data/bulletins/${date}.json`);
 }
 
-function foodRows(bulletin, compact = false) {
-  if (!bulletin) return null;
-  const rows = FOOD.filter(([key]) => bulletin.food[key])
-    .map(([key, place]) => h('div', { class: 'food-row' }, h('dt', {}, place), h('dd', {}, bulletin.food[key])));
-  return rows.length ? h('dl', { class: `food${compact ? ' food-compact' : ''}` }, rows) : null;
-}
-
 function lunchRows(bulletin, day, date, settings) {
   if (!bulletin) {
     const isRealToday = !demo && date === data.today?.date;
@@ -146,7 +135,7 @@ function lunchRows(bulletin, day, date, settings) {
   }
   const free = bulletin.food.wagon ? wagonFreePeriod(day, settings) : null;
   return [
-    foodRows(bulletin) || h('p', { class: 'empty' }, 'The bulletin didn’t list lunch today.'),
+    foodList(bulletin) || h('p', { class: 'empty' }, 'The bulletin didn’t list lunch today.'),
     free ? h('p', { class: 'tip' }, `You’re free ${ordinal(free)} period. The Wagon opens at 11 and sells out.`) : null,
   ];
 }
@@ -170,15 +159,21 @@ function forYouItems(bulletin, settings) {
     ...lines.map((line) => h('p', { class: 'fy-line' },
       h('span', { class: 'fy-time' }, line.start ? clock(line.start, true) : ''),
       ' ', line.title, line.location ? h('span', { class: 'muted' }, ` · ${line.location}`) : null)),
-    ...mine.map((item) => h('details', { class: 'fy-item' },
-      h('summary', {}, h('span', { class: 'fy-title' }, item.title || item.section),
-        h('span', { class: 'fy-meta' }, item.club ? 'Your club' : item.section)),
-      h('p', {}, item.text),
-      item.club ? h('a', { href: `#/club/${item.club}` }, 'Club page') : null)),
+    ...mine.map((item) => announcement(item, item.club ? 'Your club' : item.section)),
   ];
 }
 
-/* ---- Freshness and stale-data notice -------------------------------------- */
+/* ---- Notices: bulletin disagrees, data is old, freshness line ----------- */
+
+/* The calendar feed is the source of truth, but if today's bulletin lists a
+   different letter or period order, students should know to double-check. */
+function disagreement(date) {
+  const check = data.today?.date === date ? data.today.check : null;
+  if (!check || check.agrees) return null;
+  return h('p', { class: 'notice', role: 'status' },
+    `Today’s bulletin lists ${check.bulletin}, but the school calendar says ${check.feed}. `
+    + 'Times here follow the calendar. Ask a teacher if you’re unsure.');
+}
 
 function freshness() {
   const s = data.schedule;

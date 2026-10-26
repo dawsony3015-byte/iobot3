@@ -202,7 +202,8 @@ def test_everyone_entries_stay_untagged(oct23):
 def test_entry_title_with_a_colon_inside(oct23):
     orgs = oct23['sections'][2]
     titles = [e['title'] for e in orgs['entries']]
-    assert 'One Team 3:16 (Grs 7-12)' in titles
+    assert 'One Team 3:16' in titles          # the grade tag moves to `grades`
+    assert 'Badminton Club' in titles
     assert "ʻIolani Young Women's Collective" in titles
 
 
