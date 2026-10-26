@@ -31,7 +31,8 @@
 .result:hover { background: var(--bg-sunk); color: var(--ink); }
 .result.is-selected { background: var(--accent-tint); box-shadow: inset 3px 0 0 var(--accent); }
 .result-date { font-size: var(--fs-14); font-weight: 650; color: var(--ink-2); }
-.result-main { display: flex; align-items: center; gap: var(--s2); font-weight: 650; }
+.result-main { font-weight: 650; }
+.result-main .pill { margin-left: var(--s2); vertical-align: 2px; }
 .result-sub { color: var(--ink-2); font-size: var(--fs-14); }
 @media (min-width: 720px) {
   .result:not(.result-text) { grid-template-columns: 11rem minmax(0, 1fr); align-items: baseline; }
@@ -44,7 +45,7 @@
 .chip {
   display: inline-flex;
   align-items: center;
-  min-height: 40px;
+  min-height: var(--tap);
   padding: 0 var(--s4);
   border: 1px solid var(--line-strong);
   border-radius: 999px;

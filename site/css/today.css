@@ -19,7 +19,8 @@
   font-size: var(--fs-16);
   font-weight: 600;
 }
-.chapel { color: var(--accent); }
+.chapel, .chapel-note { color: var(--accent); }
+.chapel-note { font-weight: 600; }
 .offline-tag { align-self: flex-start; }
 
 /* The big square day letter. Red while school is on, black once it's over. */

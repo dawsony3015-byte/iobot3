@@ -11,9 +11,9 @@ import { runFrames } from '../countdown.js';
 import { bulletinFor, data } from '../data.js';
 import { fill, h } from '../dom.js';
 import { ago, clock, clockAt, dateText, ordinal } from '../format.js';
-import { dayTitle, isClassDay, statusAt, wagonFreePeriod } from '../schedule.js';
+import { dayTitle, isClassDay, nextClassDay, statusAt, wagonFreePeriod } from '../schedule.js';
 import { demo, hst, now, weekday } from '../time.js';
-import { announcement, chapelText, foodList, tile as dayTile } from './day-parts.js';
+import { announcement, chapelText, dayLine, foodList, tile as dayTile } from './day-parts.js';
 import { NowCard } from './now.js';
 import { markTimeline, timeline } from './timeline.js';
 
@@ -58,14 +58,16 @@ function build(root, status, settings) {
           h('a', { href: `#/day/${date}` }, 'Full day')),
         day.dropped.length ? h('p', { class: 'note' }, `No Period ${day.dropped.join(' or ')} today.`) : null,
         tl.el) : null,
-      h('div', { class: 'today-side' },
-        isClassDay(day) ? h('section', { class: 'section', 'aria-labelledby': 'lunch-h' },
-          h('div', { class: 'section-head' }, h('h2', { class: 'label', id: 'lunch-h' }, 'Lunch')), lunch) : null,
+      // No school: what's coming up is more useful than an empty lunch menu.
+      isClassDay(day) ? null : comingUp(date, settings),
+      isClassDay(day) ? h('div', { class: 'today-side' },
+        h('section', { class: 'section', 'aria-labelledby': 'lunch-h' },
+          h('div', { class: 'section-head' }, h('h2', { class: 'label', id: 'lunch-h' }, 'Lunch')), lunch),
         h('section', { class: 'section', 'aria-labelledby': 'foryou-h' },
           h('div', { class: 'section-head' },
             h('h2', { class: 'label', id: 'foryou-h' }, settings.grade ? `For you · Grade ${settings.grade}` : 'For you'),
             settings.grade ? h('a', { href: `#/grade/${settings.grade}` }, 'Grade page') : null),
-          forYou))),
+          forYou)) : null),
     freshness(),
   );
 
@@ -75,7 +77,7 @@ function build(root, status, settings) {
 
   // The bulletin for this date: today.json normally, or the archive in demo mode.
   bulletinFor(date).then((bulletin) => {
-    if (!lunch.isConnected) return;
+    if (!lunch.isConnected) return; // a day off has no lunch or "For you" section
     fill(lunch, lunchRows(bulletin, day, date, settings));
     fill(forYou, forYouItems(bulletin, settings));
     parts.foodList = () => foodList(bulletin, true);
@@ -87,6 +89,25 @@ function build(root, status, settings) {
 function mark(parts, status, ms) {
   if (parts.tl) markTimeline(parts.tl, status, ms);
   parts.head.mark(status);
+}
+
+/* The next few school days, for weekends and breaks. */
+function comingUp(date, settings) {
+  const rows = [];
+  for (let d = date, i = 0; i < 4; i++) {
+    const next = nextClassDay(data.schedule, d);
+    if (!next) break;
+    const [when, day] = next;
+    const chapel = chapelText(day, settings.grade, 'that day');
+    rows.push(h('li', {}, h('a', { class: 'result', href: `#/day/${when}` },
+      h('span', { class: 'result-date' }, dateText(when)),
+      h('span', { class: 'result-main' }, dayLine(day), chapel ? h('span', { class: 'chapel-note' }, ` · ${chapel}`) : null))));
+    d = when;
+  }
+  return h('section', { class: 'section today-blocks', 'aria-labelledby': 'coming-h' },
+    h('div', { class: 'section-head' }, h('h2', { class: 'label', id: 'coming-h' }, 'Coming up'),
+      h('a', { href: '#/calendar' }, 'Calendar')),
+    rows.length ? h('ul', { class: 'plain-list' }, rows) : h('p', { class: 'empty' }, 'No more school days on the calendar yet.'));
 }
 
 /* ---- Header: date, day tile, rotation, chapel ----------------------------- */

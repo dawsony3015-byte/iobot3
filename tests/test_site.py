@@ -41,6 +41,7 @@ def open_page(browser, site_url):
         settings = {'grade': grade, 'follows': list(follows)}
         context.add_init_script(f"localStorage.setItem('iobot.settings.v1', {json.dumps(json.dumps(settings))})")
         page = context.new_page()
+        page.set_default_timeout(8000)  # a broken page should fail fast, not hang the run
         page.on('console', lambda m: ERRORS.append(f'{path}: {m.text}') if m.type in ('error', 'warning') and not BLOCKED_SW.search(m.text) else None)
         page.on('pageerror', lambda e: ERRORS.append(f'{path}: {e}'))
         page.goto(f'{site_url}/{path}')

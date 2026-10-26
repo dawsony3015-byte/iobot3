@@ -46,7 +46,7 @@ def title_case(text):
     text = clean(text)
     # Only plain a-z counts as "already mixed case": "THE Pā" is still a shouted heading.
     if re.search(r'[a-z]', text):
-        return text
+        return okina(text)
     words = []
     for i, word in enumerate(text.split(' ')):
         core = re.sub(r'[^A-Za-z]', '', word)
@@ -62,6 +62,9 @@ def title_case(text):
                     lowered = lowered[:j] + ch.upper() + lowered[j + 1:]
                     break
             words.append(lowered)
-    result = ' '.join(words)
-    # The bulletin types the ʻokina as a backtick or a curly quote; show the real one.
-    return re.sub(r"(^|\s)[`‘'](?=[A-Za-z])", r'\1ʻ', result)
+    return okina(' '.join(words))
+
+
+def okina(text):
+    """The bulletin types the ʻokina as a backtick or a curly quote; show the real one."""
+    return re.sub(r"(^|\s)[`‘'](?=[A-Za-z])", r'\1ʻ', text)

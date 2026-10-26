@@ -19,7 +19,7 @@ PAIRS = [
     ('ink-2', 'bg'), ('ink-2', 'surface'), ('ink-2', 'bg-sunk'), ('ink-2', 'accent-tint'), ('ink-2', 'off-day'),
     ('ink-3', 'bg'), ('ink-3', 'surface'), ('ink-3', 'off-day'),
     ('accent', 'bg'), ('accent', 'surface'), ('accent', 'accent-tint'),
-    ('on-accent', 'accent-fill'), ('on-ink', 'ink-fill'),
+    ('on-accent', 'accent-fill'), ('on-ink', 'ink-fill'), ('banner-ink', 'banner-bg'),
 ]
 
 

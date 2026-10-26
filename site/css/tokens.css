@@ -52,6 +52,8 @@
   --ink-fill: #1b1918;
   --on-ink: #f6f4f0;
   --off-day: #e9e5df;
+  --banner-bg: #1b1918;
+  --banner-ink: #f6f4f0;
   --shadow-overlay: 0 8px 24px rgb(27 25 24 / 0.12);
 
   /* Type: one family for reading, one condensed face for the scoreboard. */
@@ -112,6 +114,8 @@
     --ink-fill: #f2eee9;
     --on-ink: #141110;
     --off-day: #221e1c;
+    --banner-bg: #2c2725;
+    --banner-ink: #f2eee9;
     --shadow-overlay: 0 8px 24px rgb(0 0 0 / 0.5);
   }
 }
@@ -133,6 +137,8 @@
   --ink-fill: #f2eee9;
   --on-ink: #141110;
   --off-day: #221e1c;
+  --banner-bg: #2c2725;
+  --banner-ink: #f2eee9;
   --shadow-overlay: 0 8px 24px rgb(0 0 0 / 0.5);
 }
 

@@ -211,7 +211,10 @@ mark {
   color: var(--ink);
 }
 .field::placeholder { color: var(--ink-3); }
-.field:focus-visible { outline-offset: 0; border-color: var(--accent); }
+.field:focus-visible { outline: none; border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+/* Safari and Chrome draw their own blue clear button in search boxes; it
+   doesn't match anything else, and select-all + delete does the same job. */
+.field[type='search']::-webkit-search-cancel-button { -webkit-appearance: none; appearance: none; }
 
 /* A row of choices that behave like radio buttons. */
 .segmented {
@@ -258,8 +261,8 @@ mark {
   gap: var(--s3);
   min-height: 40px;
   padding: calc(var(--s1) + env(safe-area-inset-top)) var(--s4) var(--s1);
-  background: var(--ink-fill);
-  color: var(--on-ink);
+  background: var(--banner-bg);
+  color: var(--banner-ink);
   font-size: var(--fs-14);
   font-weight: 600;
 }
