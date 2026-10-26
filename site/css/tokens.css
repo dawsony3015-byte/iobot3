@@ -1,0 +1,144 @@
+/* Design tokens: fonts, colors, type scale and spacing. Every other stylesheet
+   uses these variables, so the whole look can be tuned from this one file.
+   Contrast for every text/background pair is checked by tests/test_contrast.py. */
+
+@font-face {
+  font-family: 'Barlow Condensed';
+  src: url('../fonts/barlow-condensed-600.woff2') format('woff2');
+  font-weight: 600;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Barlow Condensed';
+  src: url('../fonts/barlow-condensed-700.woff2') format('woff2');
+  font-weight: 700;
+  font-display: swap;
+}
+/* Source Sans 3 is a variable font: one file covers every weight we use. */
+@font-face {
+  font-family: 'Source Sans 3';
+  src: url('../fonts/source-sans-3-latin.woff2') format('woff2-variations');
+  font-weight: 200 900;
+  font-display: swap;
+}
+/* Only the Hawaiian vowels with a kahakō (ā ē ī ō ū). The browser downloads this
+   2 KB file only when a page actually contains one of them. */
+@font-face {
+  font-family: 'Source Sans 3';
+  src: url('../fonts/source-sans-3-hawaiian.woff2') format('woff2-variations');
+  font-weight: 200 900;
+  font-display: swap;
+  unicode-range: U+0100-0101, U+0112-0113, U+012A-012B, U+014C-014D, U+016A-016B;
+}
+
+:root {
+  color-scheme: light;
+
+  /* Light theme. 'Iolani red (#C8102E) comes from iolani.org's own stylesheet;
+     see docs/DECISIONS.md. It is the only accent color. */
+  --bg: #f6f4f0;
+  --bg-sunk: #eeeae4;
+  --surface: #fcfbf9;
+  --ink: #1b1918;
+  --ink-2: #5c5651;
+  --ink-3: #67605a;
+  --line: #e2ddd6;
+  --line-strong: #cbc4bb;
+  --accent: #c8102e;
+  --accent-strong: #960c23;
+  --accent-fill: #c8102e;
+  --on-accent: #fffaf8;
+  --accent-tint: #f8e7e7;
+  --ink-fill: #1b1918;
+  --on-ink: #f6f4f0;
+  --off-day: #e9e5df;
+  --shadow-overlay: 0 8px 24px rgb(27 25 24 / 0.12);
+
+  /* Type: one family for reading, one condensed face for the scoreboard. */
+  --font-text: 'Source Sans 3', 'Segoe UI', system-ui, sans-serif;
+  --font-score: 'Barlow Condensed', 'Arial Narrow', sans-serif-condensed, sans-serif;
+  --fs-12: 0.75rem;
+  --fs-14: 0.875rem;
+  --fs-16: 1rem;
+  --fs-20: 1.25rem;
+  --fs-28: 1.75rem;
+  --fs-40: 2.5rem;
+  /* The countdown grows with the screen: 80px on a small phone, 176px on a laptop. */
+  --fs-countdown: clamp(5rem, 29vw, 11rem);
+
+  /* A 4 px spacing scale. */
+  --s1: 4px;
+  --s2: 8px;
+  --s3: 12px;
+  --s4: 16px;
+  --s5: 20px;
+  --s6: 24px;
+  --s8: 32px;
+  --s10: 40px;
+  --s12: 48px;
+  --s16: 64px;
+
+  --radius: 6px;
+  --radius-sm: 4px;
+  --tap: 44px;
+  --row-h: 60px;
+  --gutter: var(--s4);
+
+  /* One easing curve for everything that moves. */
+  --ease-out: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --t-flip: 300ms;
+  --t-swap: 350ms;
+}
+
+/* Dark theme: warm near-black, a lighter red for text so it stays readable.
+   It appears twice on purpose: once for "follow the system" and once for
+   "always dark" chosen in Me. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    color-scheme: dark;
+    --bg: #141110;
+    --bg-sunk: #0e0c0b;
+    --surface: #1c1817;
+    --ink: #f2eee9;
+    --ink-2: #aea69f;
+    --ink-3: #958d86;
+    --line: #2c2725;
+    --line-strong: #433c39;
+    --accent: #ff5a6e;
+    --accent-strong: #ff8593;
+    --accent-fill: #c8102e;
+    --on-accent: #fffaf8;
+    --accent-tint: #2c1518;
+    --ink-fill: #f2eee9;
+    --on-ink: #141110;
+    --off-day: #221e1c;
+    --shadow-overlay: 0 8px 24px rgb(0 0 0 / 0.5);
+  }
+}
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --bg: #141110;
+  --bg-sunk: #0e0c0b;
+  --surface: #1c1817;
+  --ink: #f2eee9;
+  --ink-2: #aea69f;
+  --ink-3: #958d86;
+  --line: #2c2725;
+  --line-strong: #433c39;
+  --accent: #ff5a6e;
+  --accent-strong: #ff8593;
+  --accent-fill: #c8102e;
+  --on-accent: #fffaf8;
+  --accent-tint: #2c1518;
+  --ink-fill: #f2eee9;
+  --on-ink: #141110;
+  --off-day: #221e1c;
+  --shadow-overlay: 0 8px 24px rgb(0 0 0 / 0.5);
+}
+
+@media (min-width: 720px) {
+  :root {
+    --gutter: var(--s8);
+    --fs-countdown: clamp(7rem, 17vw, 11rem);
+  }
+}
