@@ -14,11 +14,11 @@ export function render(root) {
     storageWorks ? null : h('p', { class: 'notice', role: 'status' },
       'This browser is blocking saved data, so your settings will reset when you close ʻIobot.'),
     group('Grade', 'Used for chapel, “For you”, and your calendar dots.',
-      choice('grade', [[null, 'Not set'], ...[7, 8, 9, 10, 11, 12].map((g) => [g, String(g)])])),
+      choice('grade', 'Grade', [[null, 'Not set'], ...[7, 8, 9, 10, 11, 12].map((g) => [g, String(g)])])),
     group('My classes', 'Shown next to each period. Mark a period Free if you don’t have a class.', classTable()),
     group('Clubs I follow', 'Their bulletin mentions show up under “For you” on Today.', followed()),
-    group('Theme', null, choice('theme', [['system', 'System'], ['light', 'Light'], ['dark', 'Dark']])),
-    group('Motion', 'Reduced turns off the rolling digits and sliding.', choice('motion', [['system', 'System'], ['reduced', 'Reduced']])),
+    group('Theme', null, choice('theme', 'Theme', [['system', 'System'], ['light', 'Light'], ['dark', 'Dark']])),
+    group('Motion', 'Reduced turns off the rolling digits and sliding.', choice('motion', 'Motion', [['system', 'System'], ['reduced', 'Reduced']])),
     group('Move my setup to another device', 'Copy this code on one device, then paste it here on the other.', transfer()),
     h('p', { class: 'muted small about' }, 'ʻIobot reads the school’s bell schedule calendar and the daily bulletin. ',
       'Your settings never leave this device.'));
@@ -30,19 +30,19 @@ function group(title, hint, ...body) {
 }
 
 /* A row of buttons that act like radio buttons. */
-function choice(key, options) {
-  const box = h('div', { class: 'segmented', role: 'radiogroup', 'aria-label': key });
+function choice(key, label, options) {
+  const box = h('div', { class: 'segmented', role: 'radiogroup', 'aria-label': label });
   const paint = () => {
     for (const button of box.children) button.setAttribute('aria-checked', String(button.dataset.value === String(getSettings()[key])));
   };
-  for (const [value, label] of options) {
+  for (const [value, text] of options) {
     box.append(h('button', {
       type: 'button', role: 'radio', 'data-value': String(value),
       onclick: () => {
         update({ [key]: value });
         paint();
       },
-    }, label));
+    }, text));
   }
   paint();
   return box;
@@ -54,7 +54,7 @@ function classTable() {
     const saved = getSettings().classes[p] || {};
     const name = h('input', { class: 'field', value: saved.name || '', placeholder: 'Class', 'aria-label': `Period ${p} class`, maxlength: 40 });
     const room = h('input', { class: 'field', value: saved.room || '', placeholder: 'Room', 'aria-label': `Period ${p} room`, maxlength: 20 });
-    const free = h('button', { class: 'btn', type: 'button', 'aria-pressed': String(Boolean(saved.free)), 'aria-label': `Period ${p} is free` }, 'Free');
+    const free = h('button', { class: 'btn', type: 'button', 'aria-pressed': String(Boolean(saved.free)), 'aria-label': `Period ${p} free` }, 'Free');
     const save = () => {
       const classes = { ...getSettings().classes };
       const isFree = free.getAttribute('aria-pressed') === 'true';

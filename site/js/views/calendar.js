@@ -58,8 +58,10 @@ function grid(month, now, grade) {
     if (wd === 0 || wd === 6) continue;
     cells.push(cell(d, dayRecord(data.schedule, d), now, grade));
   }
-  return h('div', { class: 'cal', role: 'grid', 'aria-label': `School days in ${dateText(`${month}-01`, 'month')}` },
-    ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'].map((w) => h('span', { class: 'cal-head', role: 'columnheader' }, w)),
+  // Each day is a link whose label says the full date, so the weekday headings
+  // are only visual.
+  return h('div', { class: 'cal' },
+    ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'].map((w) => h('span', { class: 'cal-head', 'aria-hidden': 'true' }, w)),
     cells);
 }
 
