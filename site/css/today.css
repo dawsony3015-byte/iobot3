@@ -1,0 +1,329 @@
+/* The Today screen: day header, Now card with the countdown, the timeline of
+   today's blocks, lunch, and "For you". */
+
+/* ---- Day header ----------------------------------------------------------- */
+
+.day-head {
+  display: flex;
+  align-items: center;
+  gap: var(--s4);
+  margin-bottom: var(--s6);
+}
+.day-head-text { min-width: 0; flex: 1; }
+.day-date { font-size: var(--fs-20); font-weight: 700; }
+.day-sub {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 var(--s3);
+  color: var(--ink-2);
+  font-size: var(--fs-16);
+  font-weight: 600;
+}
+.chapel { color: var(--accent); }
+.offline-tag { align-self: flex-start; }
+
+/* The big square day letter. Red while school is on, black once it's over. */
+.tile {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 72px;
+  height: 72px;
+  border-radius: var(--radius);
+  background: var(--accent-fill);
+  color: var(--on-accent);
+  font-family: var(--font-score);
+  font-weight: 700;
+  font-size: 3.25rem;
+  line-height: 1;
+  letter-spacing: -0.01em;
+  transition: background-color var(--t-swap) ease;
+}
+.tile-2 { font-size: 2.6rem; }
+.tile-3, .tile-4 { font-size: 1.6rem; }
+.tile.is-done { background: var(--ink-fill); color: var(--on-ink); }
+
+/* The period order, with the current period lit up. */
+.rot {
+  display: flex;
+  gap: var(--s1);
+  margin-top: var(--s1);
+  font-family: var(--font-score);
+  font-weight: 600;
+  font-size: var(--fs-20);
+  line-height: 1;
+  color: var(--ink-2);
+}
+.rot-p {
+  min-width: 22px;
+  padding: 3px 0 2px;
+  text-align: center;
+  border-bottom: 2px solid transparent;
+  transition: color var(--t-swap) ease, border-color var(--t-swap) ease;
+}
+.rot-p.is-done { color: var(--ink-3); opacity: 0.55; }
+.rot-p.is-current { color: var(--accent); border-bottom-color: var(--accent); }
+
+/* ---- Now card ------------------------------------------------------------- */
+
+.now {
+  padding-bottom: var(--s6);
+  border-bottom: 1px solid var(--line);
+}
+.now-swap { position: relative; }
+.swap-layer.is-leaving { position: absolute; inset: 0 0 auto 0; pointer-events: none; }
+.now-kicker { margin-bottom: var(--s1); }
+.now[data-state='block'] .now-kicker,
+.now[data-state='lunch'] .now-kicker { color: var(--accent); }
+.now-title {
+  font-size: var(--fs-28);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.now-detail {
+  color: var(--ink-2);
+  font-size: var(--fs-20);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.now-big {
+  margin: var(--s2) 0 var(--s1);
+  font-family: var(--font-score);
+  font-weight: 700;
+  font-size: clamp(3rem, 14vw, 5.5rem);
+  line-height: 0.95;
+  letter-spacing: -0.01em;
+}
+.now-foot {
+  color: var(--ink-2);
+  font-size: var(--fs-16);
+  font-weight: 600;
+}
+
+/* The countdown. Each digit has its own clipped cell of fixed width.
+   Barlow Condensed's digits stand 0.71em tall on the baseline, but the font
+   reserves 1.2em per line. A 0.8em line box (plus a sliver of padding for the
+   round bottoms of 0, 3, 5, 6, 8, 9) wraps the digits without the empty space. */
+.now-meter { margin: var(--s4) 0 var(--s3); }
+.cd {
+  display: flex;
+  align-items: flex-start;
+  font-family: var(--font-score);
+  font-weight: 700;
+  font-size: var(--fs-countdown);
+  line-height: 0.8;
+  letter-spacing: 0;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+  transition: color 600ms ease;
+}
+.cd.is-long { font-size: calc(var(--fs-countdown) * 0.74); }
+.cd.is-final { color: var(--accent); }
+.cd-cell {
+  position: relative;
+  display: inline-block;
+  overflow: hidden;
+  padding-bottom: 0.04em;
+}
+.cd-ghost { visibility: hidden; }
+.cd-digit {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  text-align: center;
+}
+/* The colon sits low in this font; lift it to the middle of the digits. */
+.cd-sep {
+  display: inline-block;
+  width: 0.26em;
+  text-align: center;
+  transform: translateY(-0.1em);
+}
+
+.bar {
+  height: 6px;
+  margin-top: var(--s3);
+  border-radius: 3px;
+  background: var(--line);
+  overflow: hidden;
+}
+.bar-fill {
+  height: 100%;
+  background: var(--accent-fill);
+  transform: scaleX(0);
+  transform-origin: left center;
+  will-change: transform;
+}
+.now[data-state='passing'] .bar-fill,
+.now[data-state='before'] .bar-fill { background: var(--ink-2); }
+
+.now-food { margin-top: var(--s4); }
+.now-food:empty { display: none; }
+
+/* ---- Layout of the rest of the screen ------------------------------------- */
+
+.today-grid { display: grid; gap: 0 var(--s10); }
+.today-side { min-width: 0; }
+
+@media (min-width: 720px) {
+  .today-grid { grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); }
+}
+
+/* On wide screens the Now card and the timeline sit side by side, so the
+   whole day is visible without scrolling. */
+@media (min-width: 1024px) {
+  .today {
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+    grid-template-areas: 'notice notice' 'head blocks' 'now blocks' 'side blocks' 'fresh blocks';
+    grid-template-rows: auto auto auto 1fr auto;
+    column-gap: var(--s12);
+    align-items: start;
+  }
+  .today > .notice { grid-area: notice; }
+  .today > .day-head { grid-area: head; }
+  .today > .now { grid-area: now; }
+  .today > .freshness { grid-area: fresh; }
+  .today-grid { display: contents; }
+  .today-blocks { grid-area: blocks; margin-top: 0; }
+  .today-side { grid-area: side; }
+}
+
+/* ---- Timeline ------------------------------------------------------------- */
+
+.tl {
+  position: relative;
+  list-style: none;
+  padding: 0;
+}
+.tl-row {
+  position: relative;
+  display: grid;
+  grid-template-columns: 56px minmax(0, 1fr);
+  align-items: center;
+  gap: var(--s3);
+  height: var(--row-h);
+  padding: 0 var(--s3);
+  border-bottom: 1px solid var(--line);
+  transition: color var(--t-swap) ease;
+}
+.tl-time {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.25;
+  font-size: var(--fs-14);
+}
+.tl-start { font-weight: 650; }
+.tl-end { color: var(--ink-3); }
+.tl-body { display: flex; flex-direction: column; min-width: 0; line-height: 1.3; }
+.tl-name {
+  display: flex;
+  align-items: center;
+  gap: var(--s2);
+  font-weight: 650;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.tl-detail {
+  color: var(--ink-2);
+  font-size: var(--fs-14);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.tl-row.kind-lunch .tl-name, .tl-row.kind-break .tl-name, .tl-row.kind-meeting .tl-name { font-weight: 600; color: var(--ink-2); }
+.tl-row.is-past { color: var(--ink-3); }
+.tl-row.is-past .tl-name, .tl-row.is-past .tl-detail { color: var(--ink-3); }
+.tl-row.is-current .tl-name { color: var(--ink); }
+
+/* The highlight behind the current block: a soft red tint with a red rule on
+   the left. It moves with transform only. */
+.tl-marker {
+  position: absolute;
+  z-index: -1;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: calc(var(--row-h) - 1px);
+  background: var(--accent-tint);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  transform: translateY(calc(var(--i, 0) * var(--row-h)));
+  transition: opacity var(--t-swap) ease;
+}
+.tl.is-ready .tl-marker { transition: transform var(--t-swap) var(--ease-out), opacity var(--t-swap) ease; }
+/* During passing time it waits on the next block, lighter. */
+.tl-marker.is-next { background: transparent; border-left-color: var(--line-strong); }
+.tl { isolation: isolate; }
+
+.note {
+  margin: var(--s2) 0;
+  font-size: var(--fs-14);
+  color: var(--ink-2);
+}
+
+/* ---- Lunch ---------------------------------------------------------------- */
+
+.food { display: grid; }
+.food-row {
+  display: grid;
+  grid-template-columns: 9.5rem minmax(0, 1fr);
+  gap: var(--s3);
+  padding: var(--s3) 0;
+  border-bottom: 1px solid var(--line);
+}
+.food-row dt { color: var(--ink-2); font-size: var(--fs-14); font-weight: 600; padding-top: 1px; }
+.food-row dd { font-weight: 600; }
+.food-compact .food-row { padding: var(--s2) 0; }
+.food-compact .food-row:last-child { border-bottom: 0; }
+@media (max-width: 380px) {
+  .food-row { grid-template-columns: 1fr; gap: 0; }
+}
+.tip {
+  margin-top: var(--s3);
+  padding-left: var(--s3);
+  border-left: 3px solid var(--accent);
+  font-weight: 600;
+}
+
+/* ---- For you -------------------------------------------------------------- */
+
+.fy-line {
+  padding: var(--s3) 0;
+  border-bottom: 1px solid var(--line);
+}
+.fy-time { font-weight: 650; margin-right: var(--s1); }
+.fy-item { border-bottom: 1px solid var(--line); }
+.fy-item summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--s3);
+  min-height: var(--tap);
+  padding: var(--s3) 0;
+  cursor: pointer;
+  list-style: none;
+}
+.fy-item summary::-webkit-details-marker { display: none; }
+.fy-title { font-weight: 650; }
+.fy-meta { flex: none; color: var(--ink-3); font-size: var(--fs-12); font-weight: 650; text-transform: uppercase; letter-spacing: 0.06em; }
+.fy-item p { padding-bottom: var(--s3); color: var(--ink-2); }
+.fy-item a { display: inline-block; padding-bottom: var(--s3); font-weight: 600; }
+
+/* ---- Freshness line ------------------------------------------------------- */
+
+.freshness {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s2);
+  margin-top: var(--s8);
+  color: var(--ink-3);
+  font-size: var(--fs-12);
+}
