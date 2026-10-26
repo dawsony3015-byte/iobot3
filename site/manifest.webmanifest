@@ -1,0 +1,17 @@
+{
+  "name": "ʻIobot: ʻIolani Upper School bell schedule",
+  "short_name": "ʻIobot",
+  "description": "The period you're in, how long is left, lunch, and the daily bulletin.",
+  "start_url": "./#/today",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#f6f4f0",
+  "theme_color": "#f6f4f0",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" },
+    { "src": "icons/favicon.svg", "sizes": "any", "type": "image/svg+xml" }
+  ]
+}

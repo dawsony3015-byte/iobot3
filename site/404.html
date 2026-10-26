@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Page not found · ʻIobot</title>
+  <meta name="description" content="This page doesn't exist. Go to today's ʻIolani Upper School bell schedule.">
+  <meta name="robots" content="noindex">
+  <!-- GitHub Pages serves this file for any missing address, at any depth, so
+       it can't rely on relative links to the site's stylesheets. Its few
+       styles are inline and use the same colors as css/tokens.css. -->
+  <style>
+    :root { color-scheme: light dark; --bg: #f6f4f0; --ink: #1b1918; --ink-2: #5c5651; --accent: #c8102e; }
+    @media (prefers-color-scheme: dark) { :root { --bg: #141110; --ink: #f2eee9; --ink-2: #aea69f; --accent: #ff5a6e; } }
+    body { margin: 0; min-height: 100dvh; display: grid; place-items: center; background: var(--bg); color: var(--ink);
+      font: 18px/1.5 'Source Sans 3', 'Segoe UI', system-ui, sans-serif; padding: 24px; box-sizing: border-box; }
+    main { max-width: 28rem; }
+    .code { font: 700 96px/0.9 'Barlow Condensed', 'Arial Narrow', sans-serif; color: var(--accent); margin: 0 0 16px; }
+    h1 { font-size: 28px; margin: 0 0 8px; }
+    p { color: var(--ink-2); margin: 0 0 24px; }
+    a { display: inline-flex; align-items: center; min-height: 44px; padding: 0 16px; border-radius: 6px;
+      background: #c8102e; color: #fffaf8; font-weight: 600; text-decoration: none; }
+    a:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+  </style>
+</head>
+<body>
+  <main>
+    <p class="code" aria-hidden="true">404</p>
+    <h1>That page doesn’t exist.</h1>
+    <p>The link might be old, or there’s a typo in the address.</p>
+    <a id="home" href="/">Go to today’s schedule</a>
+  </main>
+  <script>
+    // On a project site (username.github.io/repo/) home is the first folder, not "/".
+    const first = location.pathname.split('/')[1];
+    if (location.hostname.endsWith('github.io') && first) document.getElementById('home').href = `/${first}/`;
+  </script>
+</body>
+</html>

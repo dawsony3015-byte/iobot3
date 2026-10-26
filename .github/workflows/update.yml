@@ -1,0 +1,118 @@
+# Fetch the bell schedule feed and the daily bulletin, rebuild site/data, and
+# publish the site to GitHub Pages.
+#
+# Why here and not in the browser: Google Calendar and iolani.org don't allow
+# other websites to read their files from a browser (no CORS headers), so a
+# small Python job runs on GitHub's servers instead and the site reads the JSON
+# it produces.
+#
+# The bulletin archive and the last good schedule live on a separate `data`
+# branch. This job commits there only when something changed, and never to
+# main, so main's history stays readable.
+
+name: Update schedule and bulletin
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      feed:
+        description: Which calendar feed to read (use "test" for the live demo)
+        type: choice
+        options: [production, test]
+        default: production
+  schedule:
+    # Cron times are UTC. Honolulu is UTC-10 all year (no daylight saving).
+    # Minutes 7, 22, 37 and 52 avoid the top of the hour, when GitHub is busiest
+    # and scheduled jobs get delayed the most.
+    #
+    # Every 15 minutes, 6:07 am - 1:52 pm HST, Monday-Friday
+    # (16:00-23:59 UTC is still the same day in Honolulu).
+    - cron: '7,22,37,52 16-23 * * 1-5'
+    # Every 15 minutes, 2:07 pm - 6:52 pm HST, Monday-Friday
+    # (00:00-04:59 UTC is already the next day in UTC, so Tuesday-Saturday).
+    - cron: '7,22,37,52 0-4 * * 2-6'
+    # Once an hour, all day, every day: nights, weekends and breaks.
+    # During school hours this lines up with the :37 run above; the concurrency
+    # group below runs them one after the other and the second finds nothing new.
+    - cron: '37 * * * *'
+
+# Never run two updates at once: they would race to commit the archive.
+concurrency:
+  group: update
+  cancel-in-progress: false
+
+permissions:
+  contents: write   # commit the archive to the data branch
+  pages: write      # publish the site
+  id-token: write   # required by deploy-pages
+  actions: write    # keep this scheduled workflow switched on (see the last step)
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check out the data branch (bulletin archive, last good schedule)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          remote="https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+          if git ls-remote --exit-code --heads origin data > /dev/null; then
+            git clone --quiet --depth 1 --branch data "$remote" data-branch
+          else
+            # First run ever: start an empty data branch.
+            mkdir data-branch
+            git -C data-branch init --quiet --initial-branch data
+            git -C data-branch remote add origin "$remote"
+          fi
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+
+      - name: Install the pipeline's three libraries
+        run: pip install -r requirements.txt
+
+      - name: Fetch the feed and the bulletin, rebuild site/data
+        env:
+          # Feed URLs can live in config.json, or in repository secrets if the
+          # school would rather not publish the calendar address.
+          IOBOT_FEED_PRODUCTION_URL: ${{ secrets.IOBOT_FEED_PRODUCTION_URL }}
+          IOBOT_FEED_TEST_URL: ${{ secrets.IOBOT_FEED_TEST_URL }}
+        run: python -m pipeline.run --state data-branch --feed "${{ inputs.feed || 'production' }}"
+
+      - name: Save the archive to the data branch if anything changed
+        working-directory: data-branch
+        run: |
+          git config user.name "iobot-updater"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "Nothing new."
+          else
+            git commit --quiet -m "Update data $(date -u +%Y-%m-%dT%H:%MZ)"
+            git push --quiet origin data
+          fi
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+      - id: deploy
+        uses: actions/deploy-pages@v4
+
+      - name: Keep the schedule switched on over long breaks
+        # GitHub turns off scheduled workflows in public repositories after 60
+        # days without activity, and summer break is longer than that. Asking
+        # GitHub to enable the workflow (it already is) counts as activity.
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh api --method PUT "repos/${GITHUB_REPOSITORY}/actions/workflows/update.yml/enable"

@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- The same mark as favicon.svg, edge to edge with no rounded corners.
+       iOS and Android round the corners themselves, and "maskable" icons need
+       the letters inside the middle 80%, which this layout keeps. -->
+  <rect width="512" height="512" fill="#c8102e"/>
+  <g fill="#fffaf8" transform="translate(43 51) scale(0.8)">
+    <path d="M182 128 C152 140 130 166 130 198 A25 25 0 1 0 180 200 A25 25 0 0 0 160 176 C164 158 172 144 182 128 Z"/>
+    <rect x="198" y="132" width="58" height="250" rx="4"/>
+    <path fill-rule="evenodd" d="M346 236 a73 73 0 1 1 0 146 a73 73 0 1 1 0 -146 Z M346 280 a29 29 0 1 0 0 58 a29 29 0 1 0 0 -58 Z"/>
+  </g>
+</svg>
