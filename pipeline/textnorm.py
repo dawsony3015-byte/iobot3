@@ -44,7 +44,8 @@ def title_case(text):
     typed it that way on purpose.
     """
     text = clean(text)
-    if any(ch.islower() for ch in text):
+    # Only plain a-z counts as "already mixed case": "THE Pā" is still a shouted heading.
+    if re.search(r'[a-z]', text):
         return text
     words = []
     for i, word in enumerate(text.split(' ')):

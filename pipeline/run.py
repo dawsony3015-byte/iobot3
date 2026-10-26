@@ -11,7 +11,7 @@ import argparse
 import os
 from pathlib import Path
 
-from . import fetch_calendar
+from . import fetch_bulletin, fetch_calendar
 from .config import ROOT
 
 
@@ -23,7 +23,8 @@ def main():
     parser.add_argument('--state', type=Path, default=ROOT, help='folder for state/ and archive/')
     args = parser.parse_args()
 
-    fetch_calendar.run(args.state, args.feed, args.offline)
+    schedule = fetch_calendar.run(args.state, args.feed, args.offline)
+    fetch_bulletin.run(args.state, schedule, args.offline)
 
 
 if __name__ == '__main__':

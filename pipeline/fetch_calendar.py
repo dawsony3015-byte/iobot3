@@ -15,7 +15,7 @@ from .config import CONFIG, ROOT, SITE_DATA, feed_url, iso_now, now_hst, read_js
 from .fetch import download
 
 
-def run(state_dir, feed_name='production', offline=False):
+def run(state_dir, feed_name='production', offline=False, site_data=SITE_DATA):
     """Update the schedule. Returns the published schedule dict."""
     state_path = state_dir / 'state' / 'schedule.json'
     previous = read_json(state_path)
@@ -58,6 +58,6 @@ def run(state_dir, feed_name='production', offline=False):
         'rotations': content['rotations'],
         'days': days,
     }
-    write_json(SITE_DATA / 'schedule.json', schedule)
+    write_json(site_data / 'schedule.json', schedule)
     print(f'schedule.json: {len(days)} dates, source={source}, changed={changed}')
     return schedule
