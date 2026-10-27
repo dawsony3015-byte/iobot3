@@ -32,29 +32,32 @@
 }
 
 :root {
-  color-scheme: light;
-
-  /* Light theme. 'Iolani red (#C8102E) comes from iolani.org's own stylesheet;
-     see docs/DECISIONS.md. It is the only accent color. */
-  --bg: #f6f4f0;
-  --bg-sunk: #eeeae4;
-  --surface: #fcfbf9;
-  --ink: #1b1918;
-  --ink-2: #5c5651;
-  --ink-3: #67605a;
-  --line: #e2ddd6;
-  --line-strong: #cbc4bb;
-  --accent: #c8102e;
-  --accent-strong: #960c23;
+  /* Black, white and 'Iolani red. Black is the default; Me can switch to the
+     light version or follow the device. #C8102E comes from iolani.org's own
+     stylesheet (see docs/DECISIONS.md). It fills the day tile, the progress
+     bar and the current block; a brighter red is used for red *text* on black
+     so it stays readable. */
+  color-scheme: dark;
+  --bg: #000000;
+  --bg-sunk: #0b0b0b;
+  --surface: #111111;
+  --surface-2: #1a1a1a;
+  --ink: #ffffff;
+  --ink-2: #a3a3a3;
+  --ink-3: #858585;
+  --line: #242424;
+  --line-strong: #3d3d3d;
+  --accent: #ff4359;
+  --accent-strong: #ff7586;
   --accent-fill: #c8102e;
-  --on-accent: #fffaf8;
-  --accent-tint: #f8e7e7;
-  --ink-fill: #1b1918;
-  --on-ink: #f6f4f0;
-  --off-day: #e9e5df;
-  --banner-bg: #1b1918;
-  --banner-ink: #f6f4f0;
-  --shadow-overlay: 0 8px 24px rgb(27 25 24 / 0.12);
+  --on-accent: #ffffff;
+  --accent-tint: #230a0e;
+  --ink-fill: #ffffff;
+  --on-ink: #000000;
+  --off-day: #000000;
+  --banner-bg: #161616;
+  --banner-ink: #ffffff;
+  --shadow-overlay: 0 8px 24px rgb(0 0 0 / 0.6);
 
   /* Type: one family for reading, one condensed face for the scoreboard. */
   --font-text: 'Source Sans 3', 'Segoe UI', system-ui, sans-serif;
@@ -65,8 +68,8 @@
   --fs-20: 1.25rem;
   --fs-28: 1.75rem;
   --fs-40: 2.5rem;
-  /* The countdown grows with the screen: 80px on a small phone, 176px on a laptop. */
-  --fs-countdown: clamp(5rem, 29vw, 11rem);
+  /* The countdown grows with the screen: 96px on a small phone, 192px on a laptop. */
+  --fs-countdown: clamp(6rem, 33vw, 12rem);
 
   /* A 4 px spacing scale. */
   --s1: 4px;
@@ -92,59 +95,61 @@
   --t-swap: 350ms;
 }
 
-/* Dark theme: warm near-black, a lighter red for text so it stays readable.
-   It appears twice on purpose: once for "follow the system" and once for
-   "always dark" chosen in Me. */
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme='light']) {
-    color-scheme: dark;
-    --bg: #141110;
-    --bg-sunk: #0e0c0b;
-    --surface: #1c1817;
-    --ink: #f2eee9;
-    --ink-2: #aea69f;
-    --ink-3: #958d86;
-    --line: #2c2725;
-    --line-strong: #433c39;
-    --accent: #ff5a6e;
-    --accent-strong: #ff8593;
-    --accent-fill: #c8102e;
-    --on-accent: #fffaf8;
-    --accent-tint: #2c1518;
-    --ink-fill: #f2eee9;
-    --on-ink: #141110;
-    --off-day: #0b0908;
-    --banner-bg: #2c2725;
-    --banner-ink: #f2eee9;
-    --shadow-overlay: 0 8px 24px rgb(0 0 0 / 0.5);
-  }
-}
-:root[data-theme='dark'] {
-  color-scheme: dark;
-  --bg: #141110;
-  --bg-sunk: #0e0c0b;
-  --surface: #1c1817;
-  --ink: #f2eee9;
-  --ink-2: #aea69f;
-  --ink-3: #958d86;
-  --line: #2c2725;
-  --line-strong: #433c39;
-  --accent: #ff5a6e;
-  --accent-strong: #ff8593;
+/* The light version: white, black text, the same red. It appears twice on
+   purpose: once for "Light" chosen in Me, once for "System" on a device set
+   to light mode. */
+:root[data-theme='light'] {
+  color-scheme: light;
+  --bg: #fafafa;
+  --bg-sunk: #f0f0f0;
+  --surface: #ffffff;
+  --surface-2: #f2f2f2;
+  --ink: #0a0a0a;
+  --ink-2: #525252;
+  --ink-3: #6b6b6b;
+  --line: #e4e4e4;
+  --line-strong: #cccccc;
+  --accent: #c8102e;
+  --accent-strong: #960c23;
   --accent-fill: #c8102e;
-  --on-accent: #fffaf8;
-  --accent-tint: #2c1518;
-  --ink-fill: #f2eee9;
-  --on-ink: #141110;
-  --off-day: #0b0908;
-  --banner-bg: #2c2725;
-  --banner-ink: #f2eee9;
-  --shadow-overlay: 0 8px 24px rgb(0 0 0 / 0.5);
+  --on-accent: #ffffff;
+  --accent-tint: #fcebed;
+  --ink-fill: #0a0a0a;
+  --on-ink: #ffffff;
+  --off-day: #ececec;
+  --banner-bg: #0a0a0a;
+  --banner-ink: #ffffff;
+  --shadow-overlay: 0 8px 24px rgb(0 0 0 / 0.12);
+}
+@media (prefers-color-scheme: light) {
+  :root[data-theme='system'] {
+    color-scheme: light;
+    --bg: #fafafa;
+    --bg-sunk: #f0f0f0;
+    --surface: #ffffff;
+    --surface-2: #f2f2f2;
+    --ink: #0a0a0a;
+    --ink-2: #525252;
+    --ink-3: #6b6b6b;
+    --line: #e4e4e4;
+    --line-strong: #cccccc;
+    --accent: #c8102e;
+    --accent-strong: #960c23;
+    --accent-fill: #c8102e;
+    --on-accent: #ffffff;
+    --accent-tint: #fcebed;
+    --ink-fill: #0a0a0a;
+    --on-ink: #ffffff;
+    --off-day: #ececec;
+    --banner-bg: #0a0a0a;
+    --banner-ink: #ffffff;
+    --shadow-overlay: 0 8px 24px rgb(0 0 0 / 0.12);
+  }
 }
 
 @media (min-width: 720px) {
   :root {
     --gutter: var(--s8);
-    --fs-countdown: clamp(7rem, 17vw, 11rem);
+    --fs-countdown: clamp(8rem, 19vw, 12rem);
   }
 }

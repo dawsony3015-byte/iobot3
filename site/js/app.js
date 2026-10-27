@@ -73,12 +73,13 @@ async function show(soft = false) {
 function applySettings() {
   const { theme, motion } = getSettings();
   const html = document.documentElement;
-  if (theme === 'system') delete html.dataset.theme;
+  // Black is the default look, so it needs no attribute; tokens.css has the others.
+  if (theme === 'dark') delete html.dataset.theme;
   else html.dataset.theme = theme;
   const systemReduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
   html.dataset.motion = motion === 'reduced' || systemReduced ? 'reduced' : 'full';
-  const dark = theme === 'dark' || (theme === 'system' && matchMedia('(prefers-color-scheme: dark)').matches);
-  document.querySelectorAll('meta[name="theme-color"]').forEach((m) => m.setAttribute('content', dark ? '#141110' : '#f6f4f0'));
+  const light = theme === 'light' || (theme === 'system' && matchMedia('(prefers-color-scheme: light)').matches);
+  document.querySelector('meta[name="theme-color"]').setAttribute('content', light ? '#fafafa' : '#000000');
 }
 
 /* A slim banner while demo mode is on, with a way out. */
@@ -90,17 +91,17 @@ function showDemoBanner() {
   const tick = () => {
     const t = hst(now());
     const time = `${String(t.hour).padStart(2, '0')}:${String(t.minute).padStart(2, '0')}`;
-    label.textContent = `Demo · ${dateText(t.date)} · ${clock(time, true)}${demo.speed > 1 ? ` · ${demo.speed}× speed` : ''}`;
+    label.textContent = `${dateText(t.date)} · ${clock(time, true)}${demo.speed > 1 ? ` · ${demo.speed}× speed` : ''}`;
   };
   tick();
   setInterval(tick, demo.speed > 1 ? 250 : 1000);
-  banner.replaceChildren(label, h('a', { href: exit }, 'Exit demo'));
+  banner.replaceChildren(h('span', { class: 'demo-tag' }, 'Demo'), label, h('a', { href: exit }, 'Exit'));
   banner.hidden = false;
 }
 
 async function start() {
   applySettings();
-  matchMedia('(prefers-color-scheme: dark)').addEventListener('change', applySettings);
+  matchMedia('(prefers-color-scheme: light)').addEventListener('change', applySettings);
   matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change', applySettings);
   showDemoBanner();
   await refresh();

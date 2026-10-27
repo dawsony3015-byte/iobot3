@@ -15,9 +15,9 @@ CSS = (ROOT / 'site' / 'css' / 'tokens.css').read_text(encoding='utf-8')
 # (text, background, minimum ratio). Large text (the day tile, the countdown)
 # only needs 3:1, but everything here is held to 4.5:1 anyway.
 PAIRS = [
-    ('ink', 'bg'), ('ink', 'surface'), ('ink', 'bg-sunk'), ('ink', 'accent-tint'), ('ink', 'off-day'),
+    ('ink', 'bg'), ('ink', 'surface'), ('ink', 'surface-2'), ('ink', 'bg-sunk'), ('ink', 'accent-tint'), ('ink', 'off-day'),
     ('ink-2', 'bg'), ('ink-2', 'surface'), ('ink-2', 'bg-sunk'), ('ink-2', 'accent-tint'), ('ink-2', 'off-day'),
-    ('ink-3', 'bg'), ('ink-3', 'surface'), ('ink-3', 'off-day'),
+    ('ink-3', 'bg'), ('ink-3', 'surface'), ('ink-3', 'surface-2'), ('ink-3', 'off-day'),
     ('accent', 'bg'), ('accent', 'surface'), ('accent', 'accent-tint'),
     ('on-accent', 'accent-fill'), ('on-ink', 'ink-fill'), ('banner-ink', 'banner-bg'),
 ]
@@ -29,7 +29,7 @@ def block(selector):
     return dict(re.findall(r'--([\w-]+):\s*(#[0-9a-fA-F]{6})\s*;', match.group(1)))
 
 
-THEMES = {'light': block(':root'), 'dark': block(":root[data-theme='dark']")}
+THEMES = {'dark': block(':root'), 'light': block(":root[data-theme='light']")}
 
 
 def luminance(hex_color):
@@ -52,8 +52,8 @@ def test_aa_contrast(theme, text, background):
     assert value >= 4.5, f'{theme}: --{text} on --{background} is only {value:.2f}:1'
 
 
-def test_dark_theme_is_declared_the_same_way_twice():
-    # The dark colors appear once for "follow the system" and once for "always dark".
-    media = CSS.split('@media (prefers-color-scheme: dark)')[1]
-    system_dark = dict(re.findall(r'--([\w-]+):\s*(#[0-9a-fA-F]{6})\s*;', media.split('}')[0]))
-    assert system_dark == THEMES['dark']
+def test_light_theme_is_declared_the_same_way_twice():
+    # The light colors appear once for "Light" in Me and once for "System" on a light device.
+    media = CSS.split('@media (prefers-color-scheme: light)')[1]
+    system_light = dict(re.findall(r'--([\w-]+):\s*(#[0-9a-fA-F]{6})\s*;', media.split('}')[0]))
+    assert system_light == THEMES['light']

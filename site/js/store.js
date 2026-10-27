@@ -3,7 +3,7 @@
  *   grade    7-12, or null until they pick one
  *   classes  { 1: { name: 'Chemistry', room: 'I-203', free: false }, ... }
  *   follows  club ids, e.g. ['chess-club']
- *   theme    'system' | 'light' | 'dark'
+ *   theme    'dark' (black, the default) | 'light' | 'system'
  *   motion   'system' | 'reduced'
  *
  * Some school devices and private windows block storage. Every read and write is
@@ -12,7 +12,7 @@
  */
 
 const KEY = 'iobot.settings.v1';
-const DEFAULTS = { grade: null, classes: {}, follows: [], theme: 'system', motion: 'system' };
+const DEFAULTS = { grade: null, classes: {}, follows: [], theme: 'dark', motion: 'system' };
 const listeners = new Set();
 
 export let storageWorks = true;
@@ -41,7 +41,7 @@ function clean(raw) {
     grade: grade >= 7 && grade <= 12 ? grade : null,
     classes,
     follows: Array.isArray(raw.follows) ? [...new Set(raw.follows.filter((id) => /^[a-z0-9-]{1,80}$/.test(id)))] : [],
-    theme: ['light', 'dark'].includes(raw.theme) ? raw.theme : DEFAULTS.theme,
+    theme: ['light', 'system'].includes(raw.theme) ? raw.theme : DEFAULTS.theme,
     motion: raw.motion === 'reduced' ? 'reduced' : DEFAULTS.motion,
   };
 }

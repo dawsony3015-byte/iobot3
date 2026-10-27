@@ -45,7 +45,8 @@ def test_screenshots(site_url, theme):
         for size, (width, height) in SIZES.items():
             context = browser.new_context(viewport={'width': width, 'height': height}, color_scheme=theme,
                                           service_workers='block', device_scale_factor=2 if width < 900 else 1)
-            context.add_init_script(f"localStorage.setItem('iobot.settings.v1', {json.dumps(json.dumps(SETTINGS))})")
+            settings = {**SETTINGS, 'theme': theme}  # black is the default; 'light' is the White option
+            context.add_init_script(f"localStorage.setItem('iobot.settings.v1', {json.dumps(json.dumps(settings))})")
             page = context.new_page()
             for name, path in SCREENS.items():
                 page.goto(f'{site_url}/{path}')

@@ -14,6 +14,7 @@ import { ago, clock, clockAt, dateText, ordinal } from '../format.js';
 import { dayTitle, isClassDay, nextClassDay, statusAt, wagonFreePeriod } from '../schedule.js';
 import { demo, hst, now, weekday } from '../time.js';
 import { announcement, chapelText, dayLine, foodList, tile as dayTile } from './day-parts.js';
+import { dayBar } from './daybar.js';
 import { NowCard } from './now.js';
 import { markTimeline, timeline } from './timeline.js';
 
@@ -34,6 +35,7 @@ export function render(root, { settings }) {
       mark(parts, status, ms);
     }
     parts.card.tick(status, ms, !woke);
+    parts.bar?.tick(ms);
   });
   return stop;
 }
@@ -42,11 +44,12 @@ function build(root, status, settings) {
   const { day, date } = status;
   const card = new NowCard();
   const tl = day.blocks.length ? timeline(day, settings, { live: true }) : null;
+  const bar = day.blocks.length ? dayBar(day, date, settings.grade) : null;
   const lunch = h('div', { class: 'lunch-list' });
   const forYou = h('div', { class: 'for-you' });
   const head = header(status, settings);
 
-  const parts = { card, tl, head, foodList: () => null };
+  const parts = { card, tl, bar, head, foodList: () => null };
   fill(root,
     staleNotice(),
     disagreement(date),
@@ -54,8 +57,9 @@ function build(root, status, settings) {
     card.el,
     h('div', { class: 'today-grid' },
       tl ? h('section', { class: 'section today-blocks', 'aria-labelledby': 'blocks-h' },
-        h('div', { class: 'section-head' }, h('h2', { class: 'label', id: 'blocks-h' }, 'Today’s blocks'),
+        h('div', { class: 'section-head' }, h('h2', { class: 'label', id: 'blocks-h' }, 'Your day'),
           h('a', { href: `#/day/${date}` }, 'Full day')),
+        bar.el,
         day.dropped.length ? h('p', { class: 'note' }, `No Period ${day.dropped.join(' or ')} today.`) : null,
         tl.el) : null,
       // No school: what's coming up is more useful than an empty lunch menu.
@@ -88,7 +92,8 @@ function build(root, status, settings) {
 
 function mark(parts, status, ms) {
   if (parts.tl) markTimeline(parts.tl, status, ms);
-  parts.head.mark(status);
+  parts.bar?.mark(status, ms);
+  parts.head.mark(status, ms);
 }
 
 /* The next few school days, for weekends and breaks. */
@@ -110,33 +115,37 @@ function comingUp(date, settings) {
     rows.length ? h('ul', { class: 'plain-list' }, rows) : h('p', { class: 'empty' }, 'No more school days on the calendar yet.'));
 }
 
-/* ---- Header: date, day tile, rotation, chapel ----------------------------- */
+/* ---- Header: day tile, date, chapel, and the period order ---------------- */
 
 function header(status, settings) {
   const { day, date } = status;
   const chapel = chapelText(day, settings.grade);
   const tile = dayTile(day);
-  const strip = day.rotation.map((p) => h('span', { class: 'rot-p', 'data-period': p }, p));
+  const classDay = isClassDay(day);
+  // The period order as a row of scoreboard boxes; the current one turns red.
+  const chips = day.rotation.map((p) => h('li', { class: 'pchip', 'data-period': p }, p));
   const el = h('header', { class: 'day-head' },
-    tile,
-    h('div', { class: 'day-head-text' },
-      h('h1', { class: 'day-date' }, dateText(date, 'long')),
-      h('p', { class: 'day-sub' },
-        isClassDay(day) ? dayTitle(day) : '',
-        chapel ? h('span', { class: 'chapel' }, chapel) : null),
-      strip.length ? h('p', { class: 'rot', 'aria-label': `Period order ${day.rotation.join(', ')}` }, strip) : null),
-    data.offline ? h('span', { class: 'pill offline-tag' }, 'Offline') : null);
+    h('div', { class: 'day-head-top' },
+      tile,
+      h('div', { class: 'day-head-text' },
+        // On a day off the Now card's big "FALL BREAK" is the headline, so the date stays quiet.
+        classDay ? h('p', { class: 'day-date' }, dateText(date, 'long')) : null,
+        classDay ? h('h1', { class: 'day-name' }, dayTitle(day)) : h('h1', { class: 'day-date' }, dateText(date, 'long')),
+        chapel ? h('p', { class: 'chapel' }, chapel) : null),
+      data.offline ? h('span', { class: 'pill offline-tag' }, 'Offline') : null),
+    chips.length ? h('ol', { class: 'pchips', 'aria-label': `Period order: ${day.rotation.join(', ')}` }, chips) : null);
 
   return {
     el,
-    // Light up the period we're in and dim the ones that are done.
-    mark(s) {
+    mark(s, ms) {
       tile?.classList.toggle('is-done', s.state === 'after');
-      const done = new Set(s.blocks.filter((b) => b.period && b.endAt <= now()).map((b) => b.period));
-      for (const span of strip) {
-        const p = Number(span.dataset.period);
-        span.classList.toggle('is-current', s.block?.period === p);
-        span.classList.toggle('is-done', done.has(p) && s.block?.period !== p);
+      const done = new Set(s.blocks.filter((b) => b.period && b.endAt <= ms).map((b) => b.period));
+      const upNext = s.block ? null : s.next?.period;
+      for (const chip of chips) {
+        const p = Number(chip.dataset.period);
+        chip.classList.toggle('is-current', s.block?.period === p);
+        chip.classList.toggle('is-next', upNext === p);
+        chip.classList.toggle('is-done', done.has(p) && s.block?.period !== p);
       }
     },
   };

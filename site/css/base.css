@@ -95,9 +95,11 @@ main:focus { outline: none; }
   gap: 2px;
   color: var(--ink-2);
   text-decoration: none;
-  font-size: var(--fs-12);
+  font-family: var(--font-score);
+  font-size: var(--fs-14);
   font-weight: 600;
-  letter-spacing: 0.01em;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 .nav-item svg {
   width: 24px;
@@ -110,6 +112,32 @@ main:focus { outline: none; }
 }
 .nav-item:hover { color: var(--ink); }
 .nav-item[aria-current='page'] { color: var(--accent); }
+
+/* The ʻIobot name on phones and iPad portrait. Wide screens show the mark in
+   the side rail instead. */
+.topbar {
+  display: flex;
+  align-items: center;
+  gap: var(--s2);
+  padding: calc(var(--s3) + env(safe-area-inset-top)) max(var(--gutter), env(safe-area-inset-right)) 0 max(var(--gutter), env(safe-area-inset-left));
+  max-width: 1200px;
+  margin: 0 auto;
+  color: var(--ink);
+  text-decoration: none;
+}
+.topbar img { width: 28px; height: 28px; border-radius: 6px; }
+.topbar span {
+  font-family: var(--font-score);
+  font-weight: 700;
+  font-size: var(--fs-20);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.topbar + main { padding-top: var(--s5); }
+@media (min-width: 1024px) {
+  .topbar { display: none; }
+  .topbar + main { padding-top: calc(var(--s5) + env(safe-area-inset-top)); }
+}
 
 /* Wide screens (iPad landscape, laptops): a left side rail instead. */
 @media (min-width: 1024px) {
@@ -141,18 +169,22 @@ main:focus { outline: none; }
 /* ---- Text styles ---------------------------------------------------------- */
 
 .label {
-  font-size: var(--fs-12);
-  font-weight: 650;
-  letter-spacing: 0.08em;
+  font-family: var(--font-score);
+  font-size: var(--fs-16);
+  font-weight: 600;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--ink-2);
 }
 .muted { color: var(--ink-2); }
 .small { font-size: var(--fs-14); }
 .page-title {
-  font-size: var(--fs-28);
+  font-family: var(--font-score);
+  font-size: var(--fs-40);
   font-weight: 700;
-  letter-spacing: -0.01em;
+  line-height: 1;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
 }
 .section { margin-top: var(--s8); }
 .section-head {
@@ -164,7 +196,14 @@ main:focus { outline: none; }
   margin-bottom: var(--s1);
   border-bottom: 1px solid var(--line);
 }
-.section-head a { font-size: var(--fs-14); font-weight: 600; text-decoration: none; }
+.section-head a {
+  font-family: var(--font-score);
+  font-size: var(--fs-14);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: none;
+}
 .empty {
   padding: var(--s4) 0;
   color: var(--ink-2);
@@ -267,7 +306,15 @@ mark {
   font-weight: 600;
 }
 .demo-banner a { color: inherit; text-decoration: underline; }
-.demo-banner ~ main { padding-top: var(--s5); }
+.demo-tag {
+  padding: 1px var(--s2);
+  border-radius: var(--radius-sm);
+  background: var(--accent-fill);
+  color: var(--on-accent);
+  font-family: var(--font-score);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
 
 .notice {
   display: flex;

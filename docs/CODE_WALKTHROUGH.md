@@ -54,7 +54,8 @@ a PDF.
 | `js/app.js` | Start-up, theme and motion settings, the demo banner, the router (`#/today`, `#/day/…`, `#/club/…`) | Each screen is a separate module loaded the first time it's opened |
 | `js/views/today.js` | The Today screen and its animation loop | When a block ends it updates only what changed, so the countdown never blanks |
 | `js/views/now.js` | The Now card: wording for each state, and the slide when a block changes | `describe()` (the words) is separate from the drawing code |
-| `js/views/timeline.js` | The list of blocks with the sliding highlight | Same-height rows mean the highlight moves with one `transform` |
+| `js/views/timeline.js` | The list of blocks drawn as a transit line (one stop per block), with the sliding highlight | Same-height rows mean the highlight moves with one `transform` |
+| `js/views/daybar.js` | The whole day drawn to scale, with a needle at "now" | Segment widths are worked out once from the block times; each frame only the needle moves, with `transform` |
 | `js/views/calendar.js`, `day.js`, `search.js`, `clubs.js`, `club.js`, `grade.js`, `me.js` | One screen each | Each is under 250 lines |
 | `js/views/day-parts.js` | Pieces shared by several screens: the day tile, lunch list, an announcement | Avoids copying the same code into three screens |
 | `css/tokens.css` | Every color, font size and spacing value as a CSS variable; the fonts | The whole look can be tuned in one file. `tests/test_contrast.py` reads it |

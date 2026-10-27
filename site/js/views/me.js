@@ -17,7 +17,7 @@ export function render(root) {
       choice('grade', 'Grade', [[null, 'Not set'], ...[7, 8, 9, 10, 11, 12].map((g) => [g, String(g)])])),
     group('My classes', 'Shown next to each period. Mark a period Free if you don’t have a class.', classTable()),
     group('Clubs I follow', 'Their bulletin mentions show up under “For you” on Today.', followed()),
-    group('Theme', null, choice('theme', 'Theme', [['system', 'System'], ['light', 'Light'], ['dark', 'Dark']])),
+    group('Theme', null, choice('theme', 'Theme', [['dark', 'Black'], ['light', 'White'], ['system', 'Match device']])),
     group('Motion', 'Reduced turns off the rolling digits and sliding.', choice('motion', 'Motion', [['system', 'System'], ['reduced', 'Reduced']])),
     group('Move my setup to another device', 'Copy this code on one device, then paste it here on the other.', transfer()),
     h('p', { class: 'muted small about' }, 'ʻIobot reads the school’s bell schedule calendar and the daily bulletin. ',

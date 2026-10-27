@@ -5,8 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>ʻIobot · ʻIolani Upper School bell schedule</title>
   <meta name="description" content="The live bell schedule for ʻIolani Upper School: the period you're in, how long is left, today's lunch, and the daily bulletin.">
-  <meta name="theme-color" content="#f6f4f0" media="(prefers-color-scheme: light)">
-  <meta name="theme-color" content="#141110" media="(prefers-color-scheme: dark)">
+  <meta name="theme-color" content="#000000">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="ʻIobot">
@@ -30,15 +29,17 @@
   <link rel="modulepreload" href="js/views/now.js">
   <link rel="modulepreload" href="js/views/timeline.js">
   <link rel="modulepreload" href="js/views/day-parts.js">
+  <link rel="modulepreload" href="js/views/daybar.js">
   <link rel="stylesheet" href="css/tokens.css">
   <link rel="stylesheet" href="css/base.css">
   <link rel="stylesheet" href="css/today.css">
   <link rel="stylesheet" href="css/views.css">
   <script>
-    // Apply the saved theme before the first paint, so dark mode never flashes white.
+    // Apply a saved White or Match-device theme before the first paint, so the
+    // page never flashes black first. Black needs nothing: it's the default.
     try {
       const saved = JSON.parse(localStorage.getItem('iobot.settings.v1') || '{}');
-      if (saved.theme === 'light' || saved.theme === 'dark') document.documentElement.dataset.theme = saved.theme;
+      if (saved.theme === 'light' || saved.theme === 'system') document.documentElement.dataset.theme = saved.theme;
     } catch (err) {
       document.documentElement.dataset.storage = 'blocked';
     }
@@ -66,6 +67,7 @@
       <a class="nav-item" href="#/search" data-tab="search"><svg aria-hidden="true"><use href="#i-search"/></svg>Search</a>
       <a class="nav-item" href="#/me" data-tab="me"><svg aria-hidden="true"><use href="#i-me"/></svg>Me</a>
     </nav>
+    <a class="topbar" href="#/today" aria-label="ʻIobot, today"><img src="icons/favicon.svg" alt="" width="28" height="28"><span>ʻIobot</span></a>
     <main id="main" tabindex="-1">
       <div id="view">
         <p class="empty">Loading today's schedule…</p>

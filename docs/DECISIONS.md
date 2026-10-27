@@ -104,51 +104,77 @@ approximation.
 
 ### Color
 
-All colors are CSS custom properties in `site/css/tokens.css`. Red is the only
-accent and is used for exactly four things: the current block, the day tile,
-links, and the countdown's final minute. Everything else is warm neutrals, so
-the red means something when it appears.
+**Black, white and 'Iolani red**, with black as the default. The brief asked
+for a warm off-white background; after seeing the first version, the team
+asked for a black background with white text, so the light warm palette was
+replaced. A White option (and "Match device") is still in Me.
 
-| Token | Light | Dark | Used for |
+All colors are CSS custom properties in `site/css/tokens.css`, in pure
+neutral grays so nothing competes with the red. Red is used for the day tile,
+the current period chip, the progress bar, the current stop on the timeline,
+the countdown's colon, links, and the countdown's final minute.
+
+| Token | Black (default) | White | Used for |
 |---|---|---|---|
-| `--bg` | `#f6f4f0` | `#141110` | Page background (warm, not pure white or black) |
-| `--ink` | `#1b1918` | `#f2eee9` | Main text (not pure black or white) |
-| `--ink-2` / `--ink-3` | `#5c5651` / `#67605a` | `#aea69f` / `#958d86` | Secondary text / blocks that are over |
-| `--accent` | `#c8102e` | `#ff5a6e` | Red text and lines. Lighter in dark mode so it stays readable |
-| `--accent-fill` | `#c8102e` | `#c8102e` | Red areas with white text on them (the day tile) |
-| `--accent-tint` | `#f8e7e7` | `#2c1518` | Behind the current block |
-| `--off-day` | `#e9e5df` | `#0b0908` | Days off on the calendar: grayed in light mode, recessed in dark |
+| `--bg` | `#000000` | `#fafafa` | Page background |
+| `--ink` | `#ffffff` | `#0a0a0a` | Main text |
+| `--ink-2` / `--ink-3` | `#a3a3a3` / `#858585` | `#525252` / `#6b6b6b` | Secondary text / blocks that are over |
+| `--accent` | `#ff4359` | `#c8102e` | Red *text* and lines. Brighter on black so it stays readable (6.2:1) |
+| `--accent-fill` | `#c8102e` | `#c8102e` | Red areas with white text on them (5.9:1) |
+| `--accent-tint` | `#230a0e` | `#fcebed` | Behind the current block |
+| `--surface` | `#111111` | `#ffffff` | Calendar cells, text fields |
+
+On the calendar, days off are drawn with fine diagonal lines (the usual
+calendar sign for "not a school day"), because on a black page a plain
+"grayed" cell is nearly invisible.
 
 ### Contrast
 
 Every text/background pair the site uses, checked against WCAG AA (4.5:1 for
 normal text) by `tests/test_contrast.py`, which reads the values straight from
-`tokens.css`. The lowest is 4.92:1.
+`tokens.css`. The lowest is 4.51:1.
 
-| Text | Background | Light | Dark |
+| Text | Background | Black (default) | White |
 |---|---|---|---|
-| `--ink` | `--bg` | 15.95:1 | 16.27:1 |
-| `--ink` | `--surface` | 16.94:1 | 15.25:1 |
-| `--ink` | `--bg-sunk` | 14.62:1 | 16.90:1 |
-| `--ink` | `--accent-tint` | 14.66:1 | 14.81:1 |
-| `--ink` | `--off-day` | 13.96:1 | 17.20:1 |
-| `--ink-2` | `--bg` | 6.58:1 | 7.83:1 |
-| `--ink-2` | `--surface` | 6.99:1 | 7.34:1 |
-| `--ink-2` | `--bg-sunk` | 6.03:1 | 8.14:1 |
-| `--ink-2` | `--accent-tint` | 6.05:1 | 7.13:1 |
-| `--ink-2` | `--off-day` | 5.76:1 | 8.28:1 |
-| `--ink-3` | `--bg` | 5.63:1 | 5.76:1 |
-| `--ink-3` | `--surface` | 5.98:1 | 5.39:1 |
-| `--ink-3` | `--off-day` | 4.93:1 | 6.09:1 |
-| `--accent` | `--bg` | 5.36:1 | 6.21:1 |
-| `--accent` | `--surface` | 5.69:1 | 5.82:1 |
-| `--accent` | `--accent-tint` | 4.92:1 | 5.65:1 |
-| `--on-accent` | `--accent-fill` | 5.68:1 | 5.68:1 |
-| `--on-ink` | `--ink-fill` | 15.95:1 | 16.27:1 |
-| `--banner-ink` | `--banner-bg` | 15.95:1 | 12.77:1 |
+| `--ink` | `--bg` | 21.00:1 | 18.97:1 |
+| `--ink` | `--surface` | 18.88:1 | 19.80:1 |
+| `--ink` | `--surface-2` | 17.40:1 | 17.68:1 |
+| `--ink` | `--bg-sunk` | 19.68:1 | 17.37:1 |
+| `--ink` | `--accent-tint` | 18.73:1 | 17.20:1 |
+| `--ink` | `--off-day` | 21.00:1 | 16.76:1 |
+| `--ink-2` | `--bg` | 8.33:1 | 7.49:1 |
+| `--ink-2` | `--surface` | 7.49:1 | 7.81:1 |
+| `--ink-2` | `--bg-sunk` | 7.80:1 | 6.86:1 |
+| `--ink-2` | `--accent-tint` | 7.42:1 | 6.79:1 |
+| `--ink-2` | `--off-day` | 8.33:1 | 6.61:1 |
+| `--ink-3` | `--bg` | 5.69:1 | 5.11:1 |
+| `--ink-3` | `--surface` | 5.12:1 | 5.33:1 |
+| `--ink-3` | `--surface-2` | 4.72:1 | 4.76:1 |
+| `--ink-3` | `--off-day` | 5.69:1 | 4.51:1 |
+| `--accent` | `--bg` | 6.20:1 | 5.64:1 |
+| `--accent` | `--surface` | 5.57:1 | 5.88:1 |
+| `--accent` | `--accent-tint` | 5.53:1 | 5.11:1 |
+| `--on-accent` | `--accent-fill` | 5.88:1 | 5.88:1 |
+| `--on-ink` | `--ink-fill` | 21.00:1 | 19.80:1 |
+| `--banner-ink` | `--banner-bg` | 18.10:1 | 19.80:1 |
 
-The test caught one failure during development (`--ink-3` on `--off-day` was
-4.37:1); `--ink-3` was darkened to fix it.
+During development the test caught a failure (`--ink-3` on `--off-day` at
+4.37:1 in the first palette), which was fixed before it shipped.
+
+### Graphics
+
+- **Period chips.** The period order is a row of scoreboard boxes under the day
+  tile. Finished periods fade, the current one is red, and during passing time
+  the next one gets a white outline.
+- **The day bar** (`js/views/daybar.js`). The whole school day drawn to scale,
+  one segment per block, with a needle at "now" that glides along it. Students
+  can see the shape of the day (how long until lunch, how much is left) at a
+  glance. Only the needle moves each frame, with `transform`.
+- **The timeline rail.** The blocks are drawn like a transit line: a rail with
+  one stop per block. Stops fill in as blocks finish, and the current stop is red.
+- **Condensed uppercase labels** (Barlow Condensed) for headings, the tab
+  bar and section titles, for a scoreboard / athletics feel. Body text stays
+  in Source Sans 3 for reading.
 
 ### Type
 

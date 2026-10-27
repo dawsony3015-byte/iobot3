@@ -9,9 +9,9 @@ school's own "Bell Schedule with Periods" calendar feed and the daily
 bulletin PDF, so it follows schedule changes, assembly days and holidays
 without anyone updating it by hand.
 
-| Phone | iPad, landscape (dark) |
+| Phone | iPad, landscape |
 |---|---|
-| ![Today on a phone: a red B day tile, Period 8, 29:00 left](docs/screenshots/today-phone-light.png) | ![Today on an iPad in dark mode: the countdown on the left, the day's blocks on the right](docs/screenshots/today-ipad-landscape-dark.png) |
+| ![Today on a phone: a red B day tile, period chips with 8 lit, 29:00 left, and the day bar](docs/screenshots/today-phone-dark.png) | ![Today on an iPad: the countdown on the left, the timeline rail on the right with Period 8's stop in red](docs/screenshots/today-ipad-landscape-dark.png) |
 
 More screenshots, every screen at four sizes in both themes, are in
 [`docs/screenshots/`](docs/screenshots/).
@@ -21,16 +21,17 @@ More screenshots, every screen at four sizes in both themes, are in
 - **Now.** The current block (with your class name and room), a countdown that
   rolls each second over, and a progress bar. Before school, passing time,
   lunch, after school and days off each get their own wording.
-- **Today.** The day letter, the period order with the current period lit,
-  chapel for your grade, every block in a timeline, lunch from the bulletin,
-  and announcements for your grade and the clubs you follow.
+- **Today.** The day letter, the period order as scoreboard boxes with the
+  current period in red, chapel for your grade, a bar showing the whole day to
+  scale, every block on a transit-style timeline, lunch from the bulletin, and
+  announcements for your grade and the clubs you follow.
 - **Calendar.** A month of school days with their letters, special schedules
   marked, days off grayed, and your chapel days dotted. Any day opens in full.
 - **Search.** One box for dates (`next F day`, `nov 3`, `days until christmas break`),
   clubs (typos forgiven: `mahjog` finds Mahjong Club), and every bulletin
   saved so far (`yearbook photo`, `pā`).
-- **Me.** Your grade, class names and rooms, followed clubs, light or dark,
-  reduced motion, and a code to copy your setup to another device.
+- **Me.** Your grade, class names and rooms, followed clubs, Black (the
+  default) or White, reduced motion, and a code to copy your setup to another device.
 - **Works offline** and installs to the iPad home screen.
 - **Demo mode** for presentations: `?date=2026-10-21&time=09:00` makes the
   app act as if it's that moment, and `&speed=60` runs the clock 60× faster.
@@ -317,7 +318,7 @@ Installed along with them: [pluggy](https://github.com/pytest-dev/pluggy) (MIT),
 fonts; they aren't needed to run or build anything:
 
 ```bash
-pyftsubset barlow-condensed-latin-700-normal.woff2 --unicodes="U+0020-007E,U+00A0,U+00B7,U+2013,U+2019,U+2212" --layout-features='tnum,kern,liga' --flavor=woff2 --output-file=site/fonts/barlow-condensed-700.woff2
+pyftsubset barlow-condensed-latin-700-normal.woff2 --unicodes="U+0020-007E,U+00A0,U+00B7,U+02BB,U+2013,U+2018,U+2019,U+2212" --layout-features='tnum,kern,liga' --flavor=woff2 --output-file=site/fonts/barlow-condensed-700.woff2
 ```
 
 ### Fonts (in `site/fonts/`, license files included)

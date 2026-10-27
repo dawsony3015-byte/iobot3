@@ -12,7 +12,7 @@
  * Bump VERSION when the list below changes, so old caches get cleared.
  */
 
-const VERSION = 'v1';
+const VERSION = 'v2';
 const SHELL_CACHE = `iobot-shell-${VERSION}`;
 const DATA_CACHE = 'iobot-data';
 
@@ -41,6 +41,7 @@ const SHELL = [
   'js/views/club.js',
   'js/views/clubs.js',
   'js/views/day-parts.js',
+  'js/views/daybar.js',
   'js/views/day.js',
   'js/views/grade.js',
   'js/views/me.js',

@@ -1,85 +1,110 @@
-/* The Today screen: day header, Now card with the countdown, the timeline of
-   today's blocks, lunch, and "For you". */
+/* The Today screen: day header with period chips, the Now card with the
+   countdown, the day bar, the timeline rail, lunch, and "For you". */
 
 /* ---- Day header ----------------------------------------------------------- */
 
-.day-head {
+.day-head { margin-bottom: var(--s8); }
+.day-head-top {
   display: flex;
   align-items: center;
   gap: var(--s4);
-  margin-bottom: var(--s6);
 }
 .day-head-text { min-width: 0; flex: 1; }
-.day-date { font-size: var(--fs-20); font-weight: 700; }
-.day-sub {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0 var(--s3);
-  color: var(--ink-2);
-  font-size: var(--fs-16);
+.day-date {
+  font-family: var(--font-score);
   font-weight: 600;
+  font-size: var(--fs-16);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-2);
 }
-.chapel, .chapel-note { color: var(--accent); }
-.chapel-note { font-weight: 600; }
+.day-name {
+  font-family: var(--font-score);
+  font-weight: 700;
+  font-size: 2.25rem;
+  line-height: 1;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  margin: 2px 0 var(--s1);
+}
+.chapel {
+  font-family: var(--font-score);
+  font-weight: 600;
+  font-size: var(--fs-16);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.chapel-note { color: var(--accent); font-weight: 600; }
 .offline-tag { align-self: flex-start; }
 
-/* The big square day letter. Red while school is on, black once it's over. */
+/* The big square day letter. Red while school is on, white once it's over. */
 .tile {
   flex: none;
   display: grid;
   place-items: center;
-  width: 72px;
-  height: 72px;
+  width: 88px;
+  height: 88px;
   border-radius: var(--radius);
   background: var(--accent-fill);
   color: var(--on-accent);
   font-family: var(--font-score);
   font-weight: 700;
-  font-size: 3.25rem;
+  font-size: 4.25rem;
   line-height: 1;
-  letter-spacing: -0.01em;
-  transition: background-color var(--t-swap) ease;
+  transition: background-color var(--t-swap) ease, color var(--t-swap) ease;
 }
-.tile-2 { font-size: 2.6rem; }
-.tile-3, .tile-4 { font-size: 1.6rem; }
+.tile-2 { font-size: 3.25rem; }
+.tile-3, .tile-4 { font-size: 1.9rem; letter-spacing: 0.02em; }
 .tile.is-done { background: var(--ink-fill); color: var(--on-ink); }
 
-/* The period order, with the current period lit up. */
-.rot {
+/* The period order as scoreboard boxes. Done periods fade, the current one is
+   red, and during passing time the next one gets a white outline. */
+.pchips {
   display: flex;
-  gap: var(--s1);
-  margin-top: var(--s1);
+  gap: var(--s2);
+  margin-top: var(--s4);
+  padding: 0;
+  list-style: none;
+}
+.pchip {
+  flex: 1;
+  max-width: 64px;
+  height: 48px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-sm);
   font-family: var(--font-score);
-  font-weight: 600;
-  font-size: var(--fs-20);
+  font-weight: 700;
+  font-size: 1.6rem;
   line-height: 1;
-  color: var(--ink-2);
+  color: var(--ink);
+  transition: background-color var(--t-swap) ease, border-color var(--t-swap) ease, color var(--t-swap) ease;
 }
-.rot-p {
-  min-width: 22px;
-  padding: 3px 0 2px;
-  text-align: center;
-  border-bottom: 2px solid transparent;
-  transition: color var(--t-swap) ease, border-color var(--t-swap) ease;
-}
-.rot-p.is-done { color: var(--ink-3); opacity: 0.55; }
-.rot-p.is-current { color: var(--accent); border-bottom-color: var(--accent); }
+.pchip.is-done { color: var(--ink-3); border-color: var(--line); }
+.pchip.is-next { border-color: var(--ink); }
+.pchip.is-current { background: var(--accent-fill); border-color: var(--accent-fill); color: var(--on-accent); }
 
 /* ---- Now card ------------------------------------------------------------- */
 
-.now {
-  padding-bottom: var(--s6);
-  border-bottom: 1px solid var(--line);
-}
+.now { padding-bottom: var(--s8); }
 .now-swap { position: relative; }
 .swap-layer.is-leaving { position: absolute; inset: 0 0 auto 0; pointer-events: none; }
-.now-kicker { margin-bottom: var(--s1); }
+.now-kicker {
+  font-family: var(--font-score);
+  font-size: var(--fs-16);
+  letter-spacing: 0.12em;
+  margin-bottom: var(--s1);
+}
 .now[data-state='block'] .now-kicker,
 .now[data-state='lunch'] .now-kicker { color: var(--accent); }
 .now-title {
-  font-size: var(--fs-28);
+  font-family: var(--font-score);
   font-weight: 700;
-  letter-spacing: -0.01em;
+  font-size: var(--fs-40);
+  line-height: 1.05;
+  letter-spacing: 0.01em;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -92,12 +117,13 @@
   text-overflow: ellipsis;
 }
 .now-big {
-  margin: var(--s2) 0 var(--s1);
+  margin: var(--s2) 0 var(--s2);
   font-family: var(--font-score);
   font-weight: 700;
-  font-size: clamp(3rem, 14vw, 5.5rem);
-  line-height: 0.95;
-  letter-spacing: -0.01em;
+  font-size: clamp(3.5rem, 17vw, 7rem);
+  line-height: 0.9;
+  letter-spacing: 0;
+  text-transform: uppercase;
 }
 .now-foot {
   color: var(--ink-2);
@@ -109,7 +135,7 @@
    Barlow Condensed's digits stand 0.71em tall on the baseline, but the font
    reserves 1.2em per line. A 0.8em line box (plus a sliver of padding for the
    round bottoms of 0, 3, 5, 6, 8, 9) wraps the digits without the empty space. */
-.now-meter { margin: var(--s4) 0 var(--s3); }
+.now-meter { margin: var(--s4) 0 var(--s4); }
 .cd {
   display: flex;
   align-items: flex-start;
@@ -122,7 +148,7 @@
   color: var(--ink);
   transition: color 600ms ease;
 }
-.cd.is-long { font-size: calc(var(--fs-countdown) * 0.74); }
+.cd.is-long { font-size: calc(var(--fs-countdown) * 0.72); }
 .cd.is-final { color: var(--accent); }
 .cd-cell {
   position: relative;
@@ -138,18 +164,21 @@
   top: 0;
   text-align: center;
 }
-/* The colon sits low in this font; lift it to the middle of the digits. */
+/* The colon is the one red mark in the number. It sits low in this font, so
+   it's lifted to the middle of the digits. */
 .cd-sep {
   display: inline-block;
   width: 0.26em;
   text-align: center;
+  color: var(--accent-fill);
   transform: translateY(-0.1em);
 }
+.cd.is-final .cd-sep { color: inherit; }
 
 .bar {
-  height: 6px;
-  margin-top: var(--s3);
-  border-radius: 3px;
+  height: 8px;
+  margin-top: var(--s4);
+  border-radius: 4px;
   background: var(--line);
   overflow: hidden;
 }
@@ -165,6 +194,67 @@
 
 .now-food { margin-top: var(--s4); }
 .now-food:empty { display: none; }
+
+/* ---- The day bar ---------------------------------------------------------- */
+
+.daybar { margin: var(--s4) 0 var(--s5); }
+.db-track {
+  position: relative;
+  height: 14px;
+  /* The marker is a full-width layer moved by a percentage of its own width,
+     so it has to be clipped at the right edge. */
+  overflow: hidden;
+  padding: 0 1px;
+}
+.db-seg {
+  position: absolute;
+  top: 3px;
+  bottom: 3px;
+  border-radius: 2px;
+  background: var(--line-strong);
+  transition: background-color var(--t-swap) ease;
+}
+.db-seg[data-state='past'] { background: var(--ink-3); opacity: 0.55; }
+.db-seg[data-state='current'] { top: 0; bottom: 0; background: var(--accent-fill); }
+.db-marker {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.db-needle {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  margin-left: -1px;
+  background: var(--ink);
+}
+.db-marker.is-off { opacity: 0; }
+.db-labels {
+  position: relative;
+  height: 18px;
+  margin-top: var(--s1);
+}
+.db-label {
+  position: absolute;
+  top: 0;
+  transform: translateX(-50%);
+  font-family: var(--font-score);
+  font-weight: 600;
+  font-size: var(--fs-12);
+  letter-spacing: 0.04em;
+  color: var(--ink-3);
+}
+.db-label.is-period { font-weight: 700; font-size: var(--fs-14); color: var(--ink-2); }
+.db-label[data-state='current'] { color: var(--accent); }
+.db-label[data-state='past'] { opacity: 0.6; }
+.db-ends {
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--fs-12);
+  color: var(--ink-3);
+}
 
 /* ---- Layout of the rest of the screen ------------------------------------- */
 
@@ -195,32 +285,67 @@
   .today-side { grid-area: side; }
 }
 
-/* ---- Timeline ------------------------------------------------------------- */
+/* ---- Timeline rail -------------------------------------------------------- */
 
-.tl {
-  position: relative;
-  list-style: none;
-  padding: 0;
-}
+.tl-wrap { position: relative; isolation: isolate; }
+.tl { list-style: none; padding: 0; }
 .tl-row {
-  position: relative;
   display: grid;
-  grid-template-columns: 56px minmax(0, 1fr);
+  grid-template-columns: 48px 24px minmax(0, 1fr);
   align-items: center;
-  gap: var(--s3);
+  column-gap: var(--s2);
   height: var(--row-h);
-  padding: 0 var(--s3);
-  border-bottom: 1px solid var(--line);
-  transition: color var(--t-swap) ease;
+  padding-right: var(--s3);
 }
 .tl-time {
   display: flex;
   flex-direction: column;
+  align-items: flex-end;
   line-height: 1.25;
   font-size: var(--fs-14);
 }
 .tl-start { font-weight: 650; }
 .tl-end { color: var(--ink-3); }
+
+/* The rail: a line through every row, with one stop per block. */
+.tl-rail {
+  position: relative;
+  align-self: stretch;
+  display: grid;
+  place-items: center;
+}
+.tl-rail::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 2px;
+  margin-left: -1px;
+  background: var(--line-strong);
+}
+.tl-row:first-child .tl-rail::before { top: 50%; }
+.tl-row:last-child .tl-rail::before { bottom: 50%; }
+.tl-stop {
+  position: relative;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid var(--line-strong);
+  background: var(--bg);
+  transition: transform var(--t-swap) var(--ease-out), background-color var(--t-swap) ease, border-color var(--t-swap) ease;
+}
+.tl-row.kind-break .tl-stop, .tl-row.kind-lunch .tl-stop, .tl-row.kind-meeting .tl-stop { width: 8px; height: 8px; }
+
+.is-live .tl-row.is-past .tl-rail::before { background: var(--ink-3); }
+.is-live .tl-row.is-past .tl-stop { background: var(--ink-3); border-color: var(--ink-3); }
+.is-live .tl-row.is-next .tl-stop { border-color: var(--ink); }
+.is-live .tl-row.is-current .tl-stop {
+  background: var(--accent-fill);
+  border-color: var(--accent-fill);
+  transform: scale(1.35);
+}
+
 .tl-body { display: flex; flex-direction: column; min-width: 0; line-height: 1.3; }
 .tl-name {
   display: flex;
@@ -239,29 +364,26 @@
   text-overflow: ellipsis;
 }
 .tl-row.kind-lunch .tl-name, .tl-row.kind-break .tl-name, .tl-row.kind-meeting .tl-name { font-weight: 600; color: var(--ink-2); }
-.tl-row.is-past { color: var(--ink-3); }
-.tl-row.is-past .tl-name, .tl-row.is-past .tl-detail { color: var(--ink-3); }
+.is-live .tl-row.is-past .tl-name, .is-live .tl-row.is-past .tl-detail,
+.is-live .tl-row.is-past .tl-start, .is-live .tl-row.is-past .tl-end { color: var(--ink-3); }
 .tl-row.is-current .tl-name { color: var(--ink); }
 
-/* The highlight behind the current block: a soft red tint with a red rule on
-   the left. It moves with transform only. */
+/* The band behind the current block. It moves with transform only. */
 .tl-marker {
   position: absolute;
   z-index: -1;
   left: 0;
   right: 0;
   top: 0;
-  height: calc(var(--row-h) - 1px);
+  height: var(--row-h);
   background: var(--accent-tint);
-  border-left: 3px solid var(--accent);
-  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  border-radius: var(--radius);
   transform: translateY(calc(var(--i, 0) * var(--row-h)));
   transition: opacity var(--t-swap) ease;
 }
-.tl.is-ready .tl-marker { transition: transform var(--t-swap) var(--ease-out), opacity var(--t-swap) ease; }
-/* During passing time it waits on the next block, lighter. */
-.tl-marker.is-next { background: transparent; border-left-color: var(--line-strong); }
-.tl { isolation: isolate; }
+.tl-wrap.is-ready .tl-marker { transition: transform var(--t-swap) var(--ease-out), opacity var(--t-swap) ease; }
+/* During passing time the band waits on the next block, as an outline. */
+.tl-marker.is-next { background: transparent; box-shadow: inset 0 0 0 1px var(--line-strong); }
 
 .note {
   margin: var(--s2) 0;
@@ -279,7 +401,15 @@
   padding: var(--s3) 0;
   border-bottom: 1px solid var(--line);
 }
-.food-row dt { color: var(--ink-2); font-size: var(--fs-14); font-weight: 600; padding-top: 1px; }
+.food-row dt {
+  font-family: var(--font-score);
+  font-weight: 600;
+  font-size: var(--fs-14);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+  padding-top: 2px;
+}
 .food-row dd { font-weight: 600; }
 .food-compact .food-row { padding: var(--s2) 0; }
 .food-compact .food-row:last-child { border-bottom: 0; }
@@ -289,7 +419,7 @@
 .tip {
   margin-top: var(--s3);
   padding-left: var(--s3);
-  border-left: 3px solid var(--accent);
+  border-left: 3px solid var(--accent-fill);
   font-weight: 600;
 }
 
@@ -313,7 +443,15 @@
 }
 .fy-item summary::-webkit-details-marker { display: none; }
 .fy-title { font-weight: 650; }
-.fy-meta { flex: none; color: var(--ink-3); font-size: var(--fs-12); font-weight: 650; text-transform: uppercase; letter-spacing: 0.06em; }
+.fy-meta {
+  flex: none;
+  font-family: var(--font-score);
+  font-weight: 600;
+  font-size: var(--fs-14);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
 .fy-item p { padding-bottom: var(--s3); color: var(--ink-2); }
 .fy-item a { display: inline-block; padding-bottom: var(--s3); font-weight: 600; }
 
