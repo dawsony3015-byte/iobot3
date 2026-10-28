@@ -149,18 +149,20 @@ def test_exam_week_has_two_labels(days, date):
     assert day['blocks'] == []
 
 
-def test_christmas_day_prefers_the_break_name(days):
+def test_christmas_day(days):
+    # Dec 25 has its own label in the feed, not the break's, and no blocks.
     day = days['2026-12-25']
     assert day['type'] == 'no-school'
-    assert day['name'] == 'Christmas Break'
-    assert 'MERRY CHRISTMAS!' in day['labels']
+    assert day['name'] == 'Merry Christmas'
+    assert day['blocks'] == []
 
 
 def test_special_christmas_schedule(days):
     day = days['2026-12-15']
     assert day['name'] == 'Special Christmas Schedule'
     assert day['rotation'] == [7, 8, 5, 6]
-    assert [b['kind'] for b in day['blocks'][:3]] == ['homeroom', 'chapel', 'chapel']
+    # Homeroom, Christmas Chapel 1, a break, then Christmas Chapel 2.
+    assert [b['kind'] for b in day['blocks'][:4]] == ['homeroom', 'chapel', 'break', 'chapel']
 
 
 def test_only_this_school_year_is_kept(days):
@@ -209,6 +211,7 @@ def test_normalize_block(raw, expected):
     ('HEAD OF SCHOOL HOLIDAY', 'Head of School Holiday'),
     ('MARTIN LUTHER KING, JR. DAY SCHOOL HOLIDAY', 'Martin Luther King, Jr. Day'),
     ('KUHIO DAY SCHOOL HOLIDAY (Observed)', 'Kuhio Day (observed)'),
+    ('GOOD FRIDAY SCHOOL HOLY DAY', 'Good Friday'),
     ('NO US CLASSES', 'No US Classes'),
     ('MERRY CHRISTMAS!', 'Merry Christmas'),
     ('Christmas Break', 'Christmas Break'),

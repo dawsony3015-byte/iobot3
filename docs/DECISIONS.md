@@ -239,12 +239,9 @@ just two digits rolling instead of the whole number being rebuilt.
 
 ## 7. Not verified
 
-- **The real Feed A, Test feed and Feed B URLs.** None were provided, and the
-  school's site has no public link to them. Everything was built and tested
-  against `fixtures/school-calendar.ics`, a reconstruction (see section 1).
-- **The real 5.6 MB calendar export.** The parser follows the brief's
-  description of it (RRULE events before 2017, `Per 3 B`, folded lines) and the
-  fixture includes those cases, but it hasn't seen the actual file.
+- **The Test feed and Feed B URLs.** Not provided. Feed A's public address
+  arrived on Oct 28, 2026 and is in `config.json`; the real export replaced the
+  reconstructed fixture and all tests pass against it (see `fixtures/README.md`).
 - **Lighthouse scores.** Lighthouse needs Node.js, which wasn't on the build
   machine. The site was built to score well (self-hosted subset fonts, no
   framework, about 100 KB of heavily commented JS (about 31 KB compressed) with each screen loaded only when opened, labeled controls, AA
@@ -256,3 +253,19 @@ just two digits rolling instead of the whole number being rebuilt.
 - **The school's red.** `#C8102E` was read from iolani.org's stylesheet on
   Oct 23, 2026 (section 3). It's the official value as published there; nobody
   at the school has confirmed it.
+
+## 8. The real feed arrives (Oct 28, 2026)
+
+The public iCal address of "Bell Schedule with Periods" was found in the
+team's own calendar subscription. Parsing the real 5.8 MB file:
+
+- 214 dates this school year, 85 distinct labels (the same list as the
+  reconstruction), 94 repeating events (all before 2017, all ignored), zero
+  parser warnings.
+- One 2019 event has neither an end time nor a duration, which crashed the
+  parser. It now treats such an event as zero-length, as the iCal standard says.
+- 14 days differed from the reconstruction, all in block times or label
+  spelling (listed in `fixtures/README.md`). Two tests had encoded guesses and
+  were corrected; everything in the brief's test list still holds.
+- GitHub Actions now reads this feed every run, so a calendar change at the
+  school reaches the site within 15 minutes on a school day.

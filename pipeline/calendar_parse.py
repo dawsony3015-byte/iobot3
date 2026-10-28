@@ -56,7 +56,8 @@ def normalize_block(raw_name):
 def holiday_name(label):
     """'INDIGENOUS PEOPLES' DAY SCHOOL HOLIDAY' -> "Indigenous Peoples' Day"."""
     label = clean(label).rstrip('!')
-    label = re.sub(r'^(.*\b(?:DAY|THANKSGIVING|FRIDAY))\s+SCHOOL HOLIDAY\b', r'\1', label)
+    # "… SCHOOL HOLIDAY" and, for Good Friday, "… SCHOOL HOLY DAY".
+    label = re.sub(r'^(.*\b(?:DAY|THANKSGIVING|FRIDAY))\s+SCHOOL HOL(?:IDAY|Y DAY)\b', r'\1', label)
     # A trailing note like "(Observed)" is typed in mixed case; title-case the rest alone.
     main, note = re.match(r'^(.*?)\s*(\([^()]*\))?$', label).groups()
     return title_case(main) + (f' {note.lower()}' if note else '')
@@ -77,7 +78,7 @@ def read_events(ics_bytes, keep_from):
                 warnings.append(f'Ignored repeating event "{summary}" on {_event_date(start)}')
             continue
         if isinstance(start, dt.datetime):
-            end = event.decoded('DTEND') if 'DTEND' in event else start + event.decoded('DURATION')
+            end = event_end(event, start)
             start_hst, end_hst = _to_hst(start), _to_hst(end)
             if start_hst.date() >= keep_from:
                 name, kind, period = normalize_block(summary)
@@ -93,6 +94,16 @@ def read_events(ics_bytes, keep_from):
                     labels[day].append(summary)
                 day += dt.timedelta(days=1)
     return labels, blocks, warnings
+
+
+def event_end(event, start):
+    """A timed event's end. One 2019 event in the real feed has neither DTEND nor
+    DURATION; the iCal standard says such an event has no length."""
+    if 'DTEND' in event:
+        return event.decoded('DTEND')
+    if 'DURATION' in event:
+        return start + event.decoded('DURATION')
+    return start
 
 
 def _event_date(value):
