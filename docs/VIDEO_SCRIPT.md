@@ -1,96 +1,62 @@
-# Video script (2–3 minutes)
+# Video script (2–3 minutes, talking to the camera)
 
-About 2 minutes 40 seconds read at a normal pace. **Bold** is what to show on
-screen; the rest is what to say. Record on an iPad or in a phone-sized browser
-window at https://iobot3.web.app.
-
-Before recording, open these in tabs so there's no typing on camera:
-
-| Tab | Address |
-|---|---|
-| 1 | `https://iobot3.web.app/?date=2026-10-20&time=09:24:45#/today` |
-| 2 | `https://iobot3.web.app/?date=2026-10-14&time=10:00#/today` |
-| 3 | `https://iobot3.web.app/#/calendar` |
-| 4 | `https://iobot3.web.app/?date=2026-10-20&time=09:00#/search` |
-| 5 | `https://github.com/dawsony3015-byte/iobot3/actions` |
-
-In Me, set grade 9 and type a class name or two first, so they show on screen.
+About 2 minutes 30 seconds at a normal speaking pace. No screen recording
+needed. Short paragraphs are there so you can glance down between them.
 
 ---
 
-## 0:00 – 0:15 · Intro
+**Intro (0:00)**
 
-**Tab 1, Today screen, full view.**
+Hi, I'm [name], and this is ʻIobot, a live bell schedule for ʻIolani's Upper
+School. It's published on Firebase at iobot3.web.app.
 
-> This is ʻIobot, a live bell schedule for ʻIolani's Upper School. Open it
-> between classes and it tells you what period it is, how long is left, and
-> what's for lunch. It's live at iobot3.web.app, on Firebase.
+The idea is simple. You're walking between classes, you open it, and in one
+glance you know what period it is, exactly how long is left, and what's for
+lunch.
 
-## 0:15 – 0:45 · Today and the countdown
+**What it does (0:20)**
 
-**Point to the red day tile and the period boxes.** Wait for 9:25 so the
-countdown rolls into passing time.
+The main screen shows today's letter day, like "A day," in a big red box, and
+the period order underneath, with the period you're in lit up in red. Then
+there's a big countdown that ticks every second, and a bar showing your whole
+day to scale, so you can see how far it is to lunch.
 
-> Today is an E day. The red box is the period I'm in, and since I'm in
-> grade 9 it says Chapel, not Homeroom, because the calendar says grades 9
-> and 10 have chapel today.
->
-> Watch the countdown. It doesn't subtract one every second. Every screen
-> refresh, it works out end time minus now from the real clock, in Hawaiʻi
-> time, so it can't drift. … There: Period 3 ended, it rolled straight into
-> passing time, and the timeline moved down to Period 4.
+It knows your grade, so on chapel days it says "Chapel" for the grades that
+have chapel and "Homeroom" for everyone else. You can type in your class names
+and rooms, so instead of "Period 3" it says "Chemistry, I-203."
 
-## 0:45 – 1:05 · Special days
+It also handles the tricky days: assembly schedules, PSAT day, holidays, and
+breaks. On Fall Break, for example, it tells you school's out and when you're
+back.
 
-**Tab 2 (Fall Break), then tab 3 (Calendar).**
+And there's search. You can type "next F day" and it jumps to the date, or
+search for a club, even with a typo, and see when it meets.
 
-> On a holiday it says so, and tells me when school's back. The calendar
-> shows every school day's letter. Red corners are special schedules like
-> assembly days, striped days are no school, and red dots are my chapel days.
+**How it works under the hood (1:10)**
 
-## 1:05 – 1:25 · Search
+There are three parts working together.
 
-**Tab 4. Type `next F day`, press Enter. Back. Type `mahjog`.**
+First, the data. The school publishes the bell schedule as a Google Calendar,
+and the daily bulletin as a PDF. A website isn't allowed to read those
+directly, so I have a small Python program that runs automatically on GitHub
+every 15 minutes during the school day. It reads the calendar, figures out each
+day's letter, period order, and which grades have chapel, and pulls the lunch
+menu and club meetings out of the bulletin.
 
-> Search understands dates. "Next F day" jumps to the right day. It also
-> searches clubs from the daily bulletin, even with a typo: "mahjog" still
-> finds Mahjong Club, with its next meeting and room.
+Second, the database. Instead of a database server, that program saves
+everything as small data files that get published with the website on
+Firebase. It also saves every day's bulletin, so club search has a history the
+school's own site doesn't keep. Your personal settings, like your grade and
+classes, stay on your own device.
 
-## 1:25 – 2:25 · How it works under the hood
+Third, the front end. That's the part you see. It's plain HTML, CSS, and
+JavaScript. It loads those data files, checks for new ones every five minutes,
+and does the time math right on your device. The countdown doesn't just
+subtract a second each time; it recalculates from the real clock, in Hawaiʻi
+time, so it can't drift. And it saves a copy of the schedule, so it still
+works offline.
 
-**Optional: show the diagram from the README, or tab 5 (GitHub Actions).**
+**Close (2:15)**
 
-> Here's how the pieces fit together. There are three parts.
->
-> **The data.** The school publishes two things: a Google Calendar of bell
-> schedules, and a daily bulletin PDF. A browser isn't allowed to download
-> those directly, so a small Python program runs on GitHub every 15 minutes
-> during the school day. It reads the calendar, works out each day's letter,
-> period order, and chapel grades, and pulls the lunch, clubs, and grade
-> announcements out of the bulletin.
->
-> **The database.** Instead of a database server, the program saves its
-> results as small JSON files that get published with the website on
-> Firebase. Bulletins are archived on a separate branch, one file per day,
-> so the club search keeps a history the school's site doesn't. Personal
-> settings, like my grade and classes, stay on my own device.
->
-> **The front end.** The site is plain HTML, CSS, and JavaScript, no
-> framework. It loads those JSON files, checks for new ones every five
-> minutes, and does all the time math on the device. It even works offline,
-> because it saves a copy of the schedule.
-
-## 2:25 – 2:40 · Close
-
-**Back to tab 1, Today screen.**
-
-> So: real school data, updated automatically, accurate to the second, and
-> tested with over 240 automated tests. That's ʻIobot.
-
----
-
-### If you run long
-
-Cut the Calendar part of "Special days" and the offline sentence. That saves
-about 15 seconds without losing any required point (features, front end,
-database, logic).
+So that's ʻIobot: real school data, updated automatically, accurate to the
+second, and checked by over 240 automated tests. Thanks for watching.
