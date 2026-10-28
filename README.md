@@ -250,12 +250,14 @@ Things to know:
 
 ### Also on Firebase Hosting
 
-The same `site/` folder is deployed to Firebase Hosting (project `iobot3`,
-free Spark plan) on every run, as a second address for the school. It only
-happens when the repository has a `FIREBASE_SERVICE_ACCOUNT` secret: in the
-Firebase console, Project settings → Service accounts → Generate new private
-key, then paste the whole JSON file as that secret. `firebase.json` holds the
-hosting settings (no caching of the data files, long caching of the fonts).
+The same `site/` folder is deployed to Firebase Hosting on every run, as a
+second address: <https://iobot3.web.app> (project `iobot3`, free Spark plan).
+It only happens when the repository has a `FIREBASE_SERVICE_ACCOUNT` secret:
+in the Firebase console, Project settings → Service accounts → Generate new
+private key, then paste the whole JSON file as that secret. The service
+account also needs the **Service Usage Viewer** role in Google Cloud IAM, or
+the deploy fails with "Permission denied to get service". `firebase.json`
+holds the hosting settings (no caching of the data files, long caching of the fonts).
 
 ## Project layout
 
