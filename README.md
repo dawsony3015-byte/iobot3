@@ -248,6 +248,15 @@ Things to know:
 - **The `data` branch is the only branch the workflow writes to.** `main` only
   gets the team's own commits.
 
+### Also on Firebase Hosting
+
+The same `site/` folder is deployed to Firebase Hosting (project `iobot3`,
+free Spark plan) on every run, as a second address for the school. It only
+happens when the repository has a `FIREBASE_SERVICE_ACCOUNT` secret: in the
+Firebase console, Project settings → Service accounts → Generate new private
+key, then paste the whole JSON file as that secret. `firebase.json` holds the
+hosting settings (no caching of the data files, long caching of the fonts).
+
 ## Project layout
 
 ```
@@ -335,8 +344,9 @@ packages Google Fonts' releases.
 
 [actions/checkout](https://github.com/actions/checkout),
 [actions/setup-python](https://github.com/actions/setup-python),
-[actions/upload-pages-artifact](https://github.com/actions/upload-pages-artifact) and
-[actions/deploy-pages](https://github.com/actions/deploy-pages), all MIT.
+[actions/upload-pages-artifact](https://github.com/actions/upload-pages-artifact),
+[actions/deploy-pages](https://github.com/actions/deploy-pages) and
+[FirebaseExtended/action-hosting-deploy](https://github.com/FirebaseExtended/action-hosting-deploy), all MIT.
 
 ### Everything else
 
