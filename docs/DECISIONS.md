@@ -223,10 +223,15 @@ just two digits rolling instead of the whole number being rebuilt.
   `clubs/<id>.json` and loads only on that club's page.
 - **`today.json` lists which days have a saved bulletin**, so the site never
   requests a bulletin that doesn't exist (a 404 shows up as a console error).
-- **The service worker refreshes the app in the background.** The app shell is
-  served from the cache instantly and re-downloaded quietly, so an update
-  reaches students on their next visit without anyone bumping a version
-  number. Data always tries the network first.
+- **App updates reach returning visitors on their own.** The first version
+  refreshed cached files in the background, which left people who had opened
+  ʻIobot before stuck on old code (the background copy often came from the
+  browser's HTTP cache, and `sw.js` rarely changed). Now GitHub Actions stamps
+  `sw.js` with a fingerprint of the app files on every deploy; when the code
+  changes, the browser installs a fresh set (bypassing its HTTP cache), takes
+  over open pages, and `app.js` reloads them once. Firebase serves app files
+  with `Cache-Control: no-cache`. `tests/test_updates.py` checks this end to end.
+  Data always tries the network first.
 - **Bulletin vs. calendar disagreements are shown, not just logged.** The feed
   stays the source of truth, but if the bulletin's `US SCHEDULE` line says
   something else, Today shows a calm one-line notice so students know to check.

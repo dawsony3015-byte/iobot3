@@ -121,7 +121,22 @@ async function start() {
   startAutoRefresh();
   startAlerts();
   if ('serviceWorker' in navigator && location.protocol !== 'file:') {
-    navigator.serviceWorker.register('sw.js').catch(() => {
+    // When a new version of the app takes over this page, reload once so the
+    // student sees it. (Not on the very first visit, when nothing was in control.)
+    const hadController = Boolean(navigator.serviceWorker.controller);
+    let reloaded = false;
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if (hadController && !reloaded) {
+        reloaded = true;
+        location.reload();
+      }
+    });
+    navigator.serviceWorker.register('sw.js', { updateViaCache: 'none' }).then((registration) => {
+      // An iPad app left open for days still checks for a new version each time it's shown.
+      document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible') registration.update();
+      });
+    }).catch(() => {
       // Offline support is a bonus; the site works the same without it.
     });
   }

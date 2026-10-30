@@ -102,6 +102,15 @@ jobs:
             git push --quiet origin data
           fi
 
+      - name: Stamp the app version into the service worker
+        # A fingerprint of every app file (not the data). It only changes when
+        # the code does, so open pages reload once per real update, not every
+        # 15 minutes when the data refreshes.
+        run: |
+          version=$(cd site && find . -type f ! -path './data/*' ! -name sw.js -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -c1-12)
+          sed -i "s/^const VERSION = '[^']*';/const VERSION = '$version';/" site/sw.js
+          grep -m1 "^const VERSION" site/sw.js
+
       - uses: actions/upload-pages-artifact@v3
         with:
           path: site

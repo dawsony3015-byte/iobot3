@@ -1,18 +1,23 @@
 /* Service worker: makes ʻIobot open instantly and keep working offline.
  *
- *   The app itself (HTML, CSS, JS, fonts, icons) comes from the cache first,
- *   so it opens instantly even on slow school Wi-Fi. Each time, a fresh copy
- *   is fetched in the background, so the next visit has any update.
+ *   The app itself (HTML, CSS, JS, fonts, icons) is saved as one versioned set
+ *   and served from that set, so it opens instantly even on slow school Wi-Fi
+ *   and never mixes old and new files.
+ *
+ *   Updates: GitHub Actions stamps VERSION below with a fingerprint of the
+ *   app's files on every deploy. When the code changes, this file changes, so
+ *   browsers install the new version, download a fresh set (skipping their
+ *   own HTTP cache), take over open pages, and app.js reloads them once.
  *
  *   Data (data/*.json) comes from the network first, so it's always current.
  *   If the network fails, the last saved copy is used, with a header that
  *   tells data.js to show the small "Offline" tag. The countdown keeps running
  *   from that saved schedule.
  *
- * Bump VERSION when the list below changes, so old caches get cleared.
+ * Locally, VERSION stays 'dev'; that's fine for testing.
  */
 
-const VERSION = 'v3';
+const VERSION = 'dev';
 const SHELL_CACHE = `iobot-shell-${VERSION}`;
 const DATA_CACHE = 'iobot-data';
 
@@ -65,7 +70,9 @@ const SHELL = [
 ];
 
 self.addEventListener('install', (event) => {
-  event.waitUntil(caches.open(SHELL_CACHE).then((cache) => cache.addAll(SHELL)).then(() => self.skipWaiting()));
+  // cache: 'reload' skips the browser's HTTP cache, so the new set is really new.
+  const fresh = SHELL.map((url) => new Request(url, { cache: 'reload' }));
+  event.waitUntil(caches.open(SHELL_CACHE).then((cache) => cache.addAll(fresh)).then(() => self.skipWaiting()));
 });
 
 self.addEventListener('activate', (event) => {
@@ -108,14 +115,7 @@ async function cacheFirst(event, url) {
   const isApp = event.request.mode === 'navigate' && (url.pathname === scope || url.pathname === `${scope}index.html`);
   const key = isApp ? 'index.html' : event.request;
   const cached = await cache.match(key, { ignoreSearch: isApp });
-  const fresh = fetch(event.request).then((response) => {
-    if (response.ok && (isApp || SHELL.some((f) => url.pathname.endsWith(f) && f !== './'))) cache.put(key, response.clone());
-    return response;
-  });
-  if (cached) {
-    // Offline is fine here: the cached copy was already served.
-    event.waitUntil(fresh.catch(() => cached));
-    return cached;
-  }
-  return fresh;
+  if (cached) return cached;
+  // Not in the saved set (a 404 page, a new icon): ask the server, revalidating.
+  return fetch(event.request.url, { cache: 'no-cache' });
 }
