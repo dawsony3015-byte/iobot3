@@ -255,3 +255,7 @@
   .class-row { grid-template-columns: 20px minmax(0, 1fr) 4.5rem auto; }
   .class-row .btn { padding: 0 var(--s2); }
 }
+
+.task-form { display: grid; grid-template-columns: minmax(0, 1fr) 10rem auto; gap: var(--s2); margin-bottom: var(--s3); }
+@media (max-width: 480px) { .task-form { grid-template-columns: minmax(0, 1fr) auto; } .task-form .field[type='date'] { grid-column: 1; } }
+textarea.field { resize: vertical; font-family: inherit; }

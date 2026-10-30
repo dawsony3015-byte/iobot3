@@ -30,6 +30,8 @@
   <link rel="modulepreload" href="js/views/timeline.js">
   <link rel="modulepreload" href="js/views/day-parts.js">
   <link rel="modulepreload" href="js/views/daybar.js">
+  <link rel="modulepreload" href="js/views/today-extras.js">
+  <link rel="modulepreload" href="js/alerts.js">
   <link rel="stylesheet" href="css/tokens.css">
   <link rel="stylesheet" href="css/base.css">
   <link rel="stylesheet" href="css/today.css">
@@ -40,6 +42,8 @@
     try {
       const saved = JSON.parse(localStorage.getItem('iobot.settings.v1') || '{}');
       if (saved.theme === 'light' || saved.theme === 'system') document.documentElement.dataset.theme = saved.theme;
+      if (saved.textSize === 'large') document.documentElement.dataset.text = 'large';
+      if (saved.contrast === 'high') document.documentElement.dataset.contrast = 'high';
     } catch (err) {
       document.documentElement.dataset.storage = 'blocked';
     }

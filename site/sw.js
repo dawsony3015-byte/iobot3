@@ -12,7 +12,7 @@
  * Bump VERSION when the list below changes, so old caches get cleared.
  */
 
-const VERSION = 'v2';
+const VERSION = 'v3';
 const SHELL_CACHE = `iobot-shell-${VERSION}`;
 const DATA_CACHE = 'iobot-data';
 
@@ -26,11 +26,13 @@ const SHELL = [
   'css/base.css',
   'css/today.css',
   'css/views.css',
+  'js/alerts.js',
   'js/app.js',
   'js/countdown.js',
   'js/data.js',
   'js/dom.js',
   'js/format.js',
+  'js/import-classes.js',
   'js/schedule.js',
   'js/search-clubs.js',
   'js/search-date.js',
@@ -44,10 +46,12 @@ const SHELL = [
   'js/views/daybar.js',
   'js/views/day.js',
   'js/views/grade.js',
+  'js/views/me-extras.js',
   'js/views/me.js',
   'js/views/now.js',
   'js/views/search.js',
   'js/views/timeline.js',
+  'js/views/today-extras.js',
   'js/views/today.js',
   'fonts/barlow-condensed-600.woff2',
   'fonts/barlow-condensed-700.woff2',

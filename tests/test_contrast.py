@@ -57,3 +57,15 @@ def test_light_theme_is_declared_the_same_way_twice():
     media = CSS.split('@media (prefers-color-scheme: light)')[1]
     system_light = dict(re.findall(r'--([\w-]+):\s*(#[0-9a-fA-F]{6})\s*;', media.split('}')[0]))
     assert system_light == THEMES['light']
+
+
+@pytest.mark.parametrize('selector, base', [
+    (":root[data-contrast='high']", 'dark'),
+    (":root[data-theme='light'][data-contrast='high']", 'light'),
+])
+def test_high_contrast_is_at_least_7_to_1(selector, base):
+    # High contrast should beat WCAG's stricter AAA level (7:1) for gray text.
+    colors = {**THEMES[base], **block(selector)}
+    for text in ('ink-2', 'ink-3', 'accent'):
+        for background in ('bg', 'surface'):
+            assert ratio(colors[text], colors[background]) >= 7, f'{selector}: --{text} on --{background}'

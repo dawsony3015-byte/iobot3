@@ -269,3 +269,20 @@ team's own calendar subscription. Parsing the real 5.8 MB file:
   were corrected; everything in the brief's test list still holds.
 - GitHub Actions now reads this feed every run, so a calendar change at the
   school reaches the site within 15 minutes on a school day.
+
+## 9. Second round of features (Oct 30, 2026)
+
+The team asked for ten more features. Seven were built; three were not, on purpose.
+
+| Asked for | What was built | Why it's that way |
+|---|---|---|
+| Lock Screen / home-screen widget | Countdown in the tab title, minutes left as the app-icon badge | Real widgets need a native iPhone/iPad app; a website can't draw one |
+| Push notifications | Opt-in reminder 5 minutes before each block ends | Sent by the page, so only while ʻIobot is open or installed. Notifications with the app closed need a push server (Cloud Functions), which is not on Firebase's free plan |
+| Import my class schedule | Paste a list ("1 Chemistry I-203") to fill all eight periods | Scanning a photo would need OCR; pasting covers most cases with ~40 lines of code |
+| Assignments strip | A personal to-do list with due dates, shown on Today | Pulling real assignments needs a school-approved connection to the learning system |
+| Wagon sell-out status | **Not built** | Needs cafeteria staff to update it during lunch; nobody can do that yet |
+| Friends' locations | **Not built** | Needs accounts, a server, and school privacy approval before student locations are shared |
+| Tomorrow view | After the last block, Today shows the next school day's blocks | |
+| Change log | The pipeline compares each calendar with the last one; changed days show on Today and the day's page for 14 days | Switching between the saved copy and the live feed isn't counted as a change |
+| Accessibility | Large text (19 px base) and high contrast (gray text at least 7:1, tested) | The countdown already speaks once a minute to screen readers |
+| Translations | **Not built** | School notices need human translators; machine translation would put errors in front of families |

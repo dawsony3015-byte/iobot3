@@ -153,3 +153,33 @@
     --fs-countdown: clamp(8rem, 19vw, 12rem);
   }
 }
+
+/* Large text (Me → Text size). Every size above is in rem, so raising the root
+   size scales all the text, the countdown and the spacing that uses rem. */
+:root[data-text='large'] { font-size: 118.75%; }
+
+/* High contrast (Me → Contrast, or the device's "Increase contrast" setting):
+   gray text and lines get brighter on black, darker on white. */
+:root[data-contrast='high'] {
+  --ink-2: #dcdcdc;
+  --ink-3: #c4c4c4;
+  --line: #5a5a5a;
+  --line-strong: #8a8a8a;
+  --accent: #ff7a8a;
+}
+:root[data-theme='light'][data-contrast='high'] {
+  --ink-2: #262626;
+  --ink-3: #333333;
+  --line: #8a8a8a;
+  --line-strong: #555555;
+  --accent: #a00d25;
+}
+@media (prefers-color-scheme: light) {
+  :root[data-theme='system'][data-contrast='high'] {
+    --ink-2: #262626;
+    --ink-3: #333333;
+    --line: #8a8a8a;
+    --line-strong: #555555;
+    --accent: #a00d25;
+  }
+}

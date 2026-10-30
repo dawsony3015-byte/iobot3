@@ -11,6 +11,7 @@ import sys
 import requests
 
 from .calendar_parse import parse_feed
+from .changes import find_changes, recent
 from .config import CONFIG, ROOT, SITE_DATA, feed_url, iso_now, now_hst, read_json, write_json
 from .fetch import download
 
@@ -44,7 +45,13 @@ def run(state_dir, feed_name='production', offline=False, site_data=SITE_DATA):
     digest = hashlib.sha256(json.dumps(content, sort_keys=True).encode()).hexdigest()
     changed = previous is None or previous['hash'] != digest or previous['source'] != source
     changed_at = iso_now() if changed else previous['changed_at']
-    write_json(state_path, {'hash': digest, 'changed_at': changed_at, 'source': source, 'content': content})
+    # Only compare like with like: switching from the saved copy to the live
+    # feed (or to the Test feed) isn't the school changing its schedule.
+    history = (previous or {}).get('changes', [])
+    if previous and changed and previous['source'] == source:
+        history = (history + find_changes(previous['content']['days'], content['days'], iso_now()))[-100:]
+    write_json(state_path, {'hash': digest, 'changed_at': changed_at, 'source': source, 'content': content,
+                            'changes': history})
 
     days = content['days']
     schedule = {
@@ -56,6 +63,7 @@ def run(state_dir, feed_name='production', offline=False, site_data=SITE_DATA):
         'first_day': min(days),
         'last_day': max(days),
         'rotations': content['rotations'],
+        'changes': recent(history, now_hst().date()),
         'days': days,
     }
     write_json(site_data / 'schedule.json', schedule)

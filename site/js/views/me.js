@@ -7,18 +7,26 @@
 import { data } from '../data.js';
 import { fill, h } from '../dom.js';
 import { exportCode, getSettings, importCode, storageWorks, toggleFollow, update } from '../store.js';
+import { classImport, reminderSwitch, taskEditor } from './me-extras.js';
 
 export function render(root) {
+  const classes = h('div', {}, classTable());
   fill(root,
     h('h1', { class: 'page-title' }, 'Me'),
     storageWorks ? null : h('p', { class: 'notice', role: 'status' },
       'This browser is blocking saved data, so your settings will reset when you close ʻIobot.'),
     group('Grade', 'Used for chapel, “For you”, and your calendar dots.',
       choice('grade', 'Grade', [[null, 'Not set'], ...[7, 8, 9, 10, 11, 12].map((g) => [g, String(g)])])),
-    group('My classes', 'Shown next to each period. Mark a period Free if you don’t have a class.', classTable()),
+    group('My classes', 'Shown next to each period. Mark a period Free if you don’t have a class.', classes),
+    group('Paste my schedule', 'Copy your schedule from anywhere and paste it here to fill in the classes above.',
+      classImport(() => fill(classes, classTable()))),
+    group('To-do', 'Homework, tests and forms. The next few show on Today.', taskEditor()),
+    group('Reminders', 'A notification 5 minutes before each block ends.', reminderSwitch()),
     group('Clubs I follow', 'Their bulletin mentions show up under “For you” on Today.', followed()),
     group('Theme', null, choice('theme', 'Theme', [['dark', 'Black'], ['light', 'White'], ['system', 'Match device']])),
     group('Motion', 'Reduced turns off the rolling digits and sliding.', choice('motion', 'Motion', [['system', 'System'], ['reduced', 'Reduced']])),
+    group('Text size', null, choice('textSize', 'Text size', [['normal', 'Normal'], ['large', 'Large']])),
+    group('Contrast', 'High makes gray text and lines brighter.', choice('contrast', 'Contrast', [['normal', 'Normal'], ['high', 'High']])),
     group('Move my setup to another device', 'Copy this code on one device, then paste it here on the other.', transfer()),
     h('p', { class: 'muted small about' }, 'ʻIobot reads the school’s bell schedule calendar and the daily bulletin. ',
       'Your settings never leave this device.'));

@@ -466,3 +466,34 @@
   color: var(--ink-3);
   font-size: var(--fs-12);
 }
+
+/* ---- Schedule changes, to-dos, tomorrow ---------------------------------- */
+
+.notice-change { display: block; border-left-color: var(--accent-fill); }
+.notice-change ul { margin-top: var(--s1); }
+.notice-change li { padding: 2px 0; }
+.todo-row {
+  display: grid;
+  grid-template-columns: 5.5rem minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--s3);
+  min-height: var(--tap);
+  border-bottom: 1px solid var(--line);
+}
+.todo-due {
+  font-family: var(--font-score);
+  font-weight: 600;
+  font-size: var(--fs-14);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+}
+.todo-row.is-late .todo-due { color: var(--accent); }
+.todo-text { font-weight: 600; }
+.tomorrow-title {
+  font-family: var(--font-score);
+  font-weight: 700;
+  font-size: var(--fs-28);
+  text-transform: uppercase;
+  margin: var(--s2) 0 var(--s1);
+}

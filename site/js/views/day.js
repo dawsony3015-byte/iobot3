@@ -34,6 +34,7 @@ export function render(root, { route, settings }) {
           h('span', { class: 'muted' }, relativeDay(date, now))),
         day.rotation.length ? h('p', { class: 'rot' }, rotationText(day.rotation)) : null)),
     day.label ? h('p', { class: 'source-label' }, 'Calendar says: ', h('q', {}, day.labels.join(' + '))) : null,
+    changeNote(date),
     body(day, settings),
     h('section', { class: 'section', 'aria-labelledby': 'bulletin-h' },
       h('div', { class: 'section-head' }, h('h2', { class: 'label', id: 'bulletin-h' }, 'Daily bulletin')), bulletin));
@@ -78,4 +79,12 @@ function schoolDay(date, step) {
   let d = addDays(date, step);
   while (weekday(d) === 0 || weekday(d) === 6) d = addDays(d, step);
   return d;
+}
+
+/* If the school changed this day recently, say so (and what it was before). */
+function changeNote(date) {
+  const change = (data.schedule.changes || []).filter((c) => c.date === date).pop();
+  if (!change) return null;
+  return h('p', { class: 'notice notice-change', role: 'status' }, h('strong', {}, 'Changed recently. '),
+    change.times_only ? 'The block times for this day were updated.' : `This day was “${change.before}”.`);
 }

@@ -220,6 +220,70 @@ def test_works_offline(browser, site_url):
     context.close()
 
 
+# ---- Newer features ---------------------------------------------------------
+
+def test_countdown_in_the_tab_title(open_page):
+    page = open_page('?date=2026-10-20&time=09:00#/calendar', grade=9)
+    page.wait_for_function("document.title.includes('Period 3')")
+    assert page.title().startswith(('25:00', '24:59')) and page.title().endswith('· Period 3')
+
+
+def test_tomorrow_preview_after_school(open_page):
+    page = open_page('?date=2026-10-20&time=15:30#/today')
+    expect(page.locator('#tomorrow-h')).to_have_text('Tomorrow')
+    expect(page.locator('.tomorrow-title')).to_have_text('F day')
+
+
+def test_rolls_into_after_school_and_shows_tomorrow(open_page):
+    page = open_page('?date=2026-10-20&time=14:59:58#/today')
+    expect(page.locator('#tomorrow-h')).to_have_text('Tomorrow', timeout=5000)
+
+
+@pytest.mark.parametrize('pasted, expected', [
+    ('1 Chemistry I-203', {'1': {'name': 'Chemistry', 'room': 'I-203', 'free': False}}),
+    ('Period 2: English 10 - C201', {'2': {'name': 'English 10', 'room': 'C201', 'free': False}}),
+    ('3. World History (B105)', {'3': {'name': 'World History', 'room': 'B105', 'free': False}}),
+    ('P4 Free', {'4': {'name': '', 'room': '', 'free': True}}),
+    ('8 PE Upper Gym', {'8': {'name': 'PE', 'room': 'Upper Gym', 'free': False}}),
+    ('5 Spanish 3', {'5': {'name': 'Spanish 3', 'room': '', 'free': False}}),
+    ('Lunch with friends', {}),
+])
+def test_class_import_parser(open_page, pasted, expected):
+    page = open_page('#/me')
+    found = page.evaluate("async (t) => (await import('./js/import-classes.js')).parseClasses(t)", pasted)
+    assert found == expected
+
+
+def test_paste_schedule_fills_the_classes(open_page):
+    page = open_page('#/me')
+    page.fill('textarea', '1 Chemistry I-203\n2 Free')
+    page.click('text=Fill in my classes')
+    expect(page.get_by_role('status').filter(has_text='Filled in 2 periods')).to_be_visible()
+    expect(page.get_by_label('Period 1 class')).to_have_value('Chemistry')
+    expect(page.get_by_label('Period 1 room')).to_have_value('I-203')
+
+
+def test_todo_shows_on_today_and_can_be_finished(open_page):
+    page = open_page('?date=2026-10-20&time=09:00#/me')
+    page.get_by_label('To-do').fill('Chem lab report')
+    page.get_by_label('Due date').fill('2026-10-21')
+    page.click('.task-form button')
+    page.goto(page.url.replace('#/me', '#/today'))
+    row = page.locator('.todo-row')
+    expect(row).to_contain_text('Chem lab report')
+    expect(row.locator('.todo-due')).to_have_text('tomorrow')
+    row.locator('button').click()
+    expect(page.locator('.todo-row')).to_have_count(0)
+
+
+def test_large_text_and_high_contrast(open_page):
+    page = open_page('#/me')
+    page.get_by_role('radiogroup', name='Text size').get_by_role('radio', name='Large').click()
+    page.get_by_role('radiogroup', name='Contrast').get_by_role('radio', name='High').click()
+    assert page.evaluate("[document.documentElement.dataset.text, document.documentElement.dataset.contrast]") == ['large', 'high']
+    assert page.evaluate("getComputedStyle(document.documentElement).fontSize") == '19px'
+
+
 def test_no_console_errors():
     # Runs last in this file: every page opened above reported here.
     assert ERRORS == [], '\n'.join(sorted(set(ERRORS)))

@@ -6,6 +6,7 @@
  * which may return a cleanup function for when the student leaves the screen.
  */
 
+import { startAlerts } from './alerts.js';
 import { data, onData, refresh, startAutoRefresh } from './data.js';
 import { fadeIn, h } from './dom.js';
 import { clock, dateText } from './format.js';
@@ -69,15 +70,19 @@ async function show(soft = false) {
   shown = route.name;
 }
 
-/* Theme and motion come from Me, falling back to the device's own setting. */
+/* Theme, motion, text size and contrast come from Me, falling back to the
+   device's own setting. */
 function applySettings() {
-  const { theme, motion } = getSettings();
+  const { theme, motion, textSize, contrast } = getSettings();
   const html = document.documentElement;
   // Black is the default look, so it needs no attribute; tokens.css has the others.
   if (theme === 'dark') delete html.dataset.theme;
   else html.dataset.theme = theme;
   const systemReduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
   html.dataset.motion = motion === 'reduced' || systemReduced ? 'reduced' : 'full';
+  html.dataset.text = textSize;
+  const systemContrast = matchMedia('(prefers-contrast: more)').matches;
+  html.dataset.contrast = contrast === 'high' || systemContrast ? 'high' : 'normal';
   const light = theme === 'light' || (theme === 'system' && matchMedia('(prefers-color-scheme: light)').matches);
   document.querySelector('meta[name="theme-color"]').setAttribute('content', light ? '#fafafa' : '#000000');
 }
@@ -114,6 +119,7 @@ async function start() {
   });
   await show();
   startAutoRefresh();
+  startAlerts();
   if ('serviceWorker' in navigator && location.protocol !== 'file:') {
     navigator.serviceWorker.register('sw.js').catch(() => {
       // Offline support is a bonus; the site works the same without it.

@@ -32,6 +32,20 @@ More screenshots, every screen at four sizes in both themes, are in
   saved so far (`yearbook photo`, `pā`).
 - **Me.** Your grade, class names and rooms, followed clubs, Black (the
   default) or White, reduced motion, and a code to copy your setup to another device.
+- **At a glance without opening it.** The countdown shows in the browser tab
+  title, and on the home-screen icon's badge where the device supports it.
+- **Reminders.** An opt-in notification 5 minutes before each block ends
+  (while ʻIobot is open or installed).
+- **Tomorrow, after school.** Once the last block ends, Today shows tomorrow's
+  blocks with your class names.
+- **Schedule changes.** If the school edits an upcoming day, Today and that
+  day's page say what changed and when.
+- **To-do list.** Add homework and tests in Me; the next few show on Today,
+  overdue ones in red.
+- **Paste your schedule.** Paste a list like "1 Chemistry I-203" and your eight
+  periods fill in.
+- **Large text and high contrast**, in Me (high contrast also follows the
+  device's "Increase contrast" setting).
 - **Works offline** and installs to the iPad home screen.
 - **Demo mode** for presentations: `?date=2026-10-21&time=09:00` makes the
   app act as if it's that moment, and `&speed=60` runs the clock 60× faster.

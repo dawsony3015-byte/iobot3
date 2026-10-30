@@ -16,6 +16,7 @@ import { demo, hst, now, weekday } from '../time.js';
 import { announcement, chapelText, dayLine, foodList, tile as dayTile } from './day-parts.js';
 import { dayBar } from './daybar.js';
 import { NowCard } from './now.js';
+import { changeNotice, todoStrip, tomorrowPreview } from './today-extras.js';
 import { markTimeline, timeline } from './timeline.js';
 
 export function render(root, { settings }) {
@@ -25,9 +26,10 @@ export function render(root, { settings }) {
   const stop = runFrames(now, (ms, woke) => {
     if (ms >= status.to || woke) {
       const next = statusAt(data.schedule, ms);
-      if (next.date !== status.date) {
+      // A new day, or school just let out (tomorrow's preview appears): draw everything again.
+      if (next.date !== status.date || (next.state === 'after' && status.state !== 'after')) {
         status = next;
-        parts = build(root, status, settings); // a new day: draw everything again
+        parts = build(root, status, settings);
         return;
       }
       if (ms >= status.to) parts.card.show(next, ms, settings, parts.foodList(), !woke);
@@ -53,6 +55,7 @@ function build(root, status, settings) {
   fill(root,
     staleNotice(),
     disagreement(date),
+    changeNotice(date),
     head.el,
     card.el,
     h('div', { class: 'today-grid' },
@@ -64,7 +67,10 @@ function build(root, status, settings) {
         tl.el) : null,
       // No school: what's coming up is more useful than an empty lunch menu.
       isClassDay(day) ? null : comingUp(date, settings),
+      isClassDay(day) ? null : todoStrip(settings, date),
       isClassDay(day) ? h('div', { class: 'today-side' },
+        tomorrowPreview(status, settings),
+        todoStrip(settings, date),
         h('section', { class: 'section', 'aria-labelledby': 'lunch-h' },
           h('div', { class: 'section-head' }, h('h2', { class: 'label', id: 'lunch-h' }, 'Lunch')), lunch),
         h('section', { class: 'section', 'aria-labelledby': 'foryou-h' },

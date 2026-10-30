@@ -55,6 +55,10 @@ a PDF.
 | `js/views/today.js` | The Today screen and its animation loop | When a block ends it updates only what changed, so the countdown never blanks |
 | `js/views/now.js` | The Now card: wording for each state, and the slide when a block changes | `describe()` (the words) is separate from the drawing code |
 | `js/views/timeline.js` | The list of blocks drawn as a transit line (one stop per block), with the sliding highlight | Same-height rows mean the highlight moves with one `transform` |
+| `js/alerts.js` | Countdown in the tab title, app-icon badge, and 5-minute reminders | Runs once a second on every screen and reads the same `statusAt()` as Today, so they can't disagree |
+| `js/import-classes.js` | Turns a pasted schedule ("1 Chemistry I-203") into the eight periods | Pure function with a test for every format |
+| `js/views/today-extras.js` | Schedule-change notice, to-do strip, tomorrow preview | Kept apart so `today.js` stays short |
+| `js/views/me-extras.js` | Paste-schedule box, to-do editor, reminders switch | Same reason, for `me.js` |
 | `js/views/daybar.js` | The whole day drawn to scale, with a needle at "now" | Segment widths are worked out once from the block times; each frame only the needle moves, with `transform` |
 | `js/views/calendar.js`, `day.js`, `search.js`, `clubs.js`, `club.js`, `grade.js`, `me.js` | One screen each | Each is under 250 lines |
 | `js/views/day-parts.js` | Pieces shared by several screens: the day tile, lunch list, an announcement | Avoids copying the same code into three screens |
