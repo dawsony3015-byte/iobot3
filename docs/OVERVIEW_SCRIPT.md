@@ -7,7 +7,7 @@ them. [Name] is a placeholder.
 
 ---
 
-## 1. The problem (0:00)
+## 1. The problem
 
 Hi, I'm [name], and this is ʻIobot, a live bell schedule for ʻIolani's Upper
 School. It's at iobot3.web.app.
@@ -21,7 +21,7 @@ answer one question: what period is it, and how long do I have?
 So my goal was simple. Open the app between classes, and in one glance you
 know where you are, how long is left, and what's coming next.
 
-## 2. What it does (0:40)
+## 2. What it does
 
 The main screen is called Today. At the top is the letter day in a big red
 box, and under it the period order as a row of boxes, with the period you're
@@ -43,7 +43,7 @@ I-203."
 It also shows lunch for the One Team Wagon, the dining hall and the snack bar,
 announcements for your grade, and your to-do list.
 
-## 3. The features I'm proudest of (1:40)
+## 3. The features I'm proudest of
 
 A few things make it different from a normal schedule app.
 
@@ -67,7 +67,7 @@ history the school's own website doesn't keep.
 night. And it works offline, installs to your home screen, and has a demo mode
 I can use to show any day and time.
 
-## 4. How it gets the data (2:40)
+## 4. How it gets the data
 
 Here's how it actually works. There are two sources of data.
 
@@ -100,7 +100,7 @@ For the calendar, it reads every event, keeps only this school year, converts
 the times to Hawaiʻi time, and works out each day's letter, period order, and
 which grades have chapel.
 
-## 5. How the pieces fit together (3:50)
+## 5. How the pieces fit together
 
 So there are three parts.
 
@@ -122,7 +122,7 @@ time the screen refreshes, it calculates end time minus now from the real
 clock, in Hawaiʻi time. So it can't drift, even if your iPad goes to sleep or
 is set to a different time zone.
 
-## 6. Why I built it this way (4:40)
+## 6. Why I built it this way
 
 I made a few choices on purpose.
 
@@ -140,7 +140,7 @@ period, and that someone who opened the app before still gets new updates.
 And I designed it for the hallway: black, white, and ʻIolani red, big
 readable numbers, and red used only for what matters right now.
 
-## 7. Why I like it (5:20)
+## 7. Why I like it
 
 What I like most is that it just knows. You don't have to remember if it's an
 F day, or check the bulletin for lunch, or figure out if your grade has
