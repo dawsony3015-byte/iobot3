@@ -34,6 +34,13 @@ def served_copy(tmp_path):
             self.send_header('Cache-Control', 'no-cache')
             super().end_headers()
 
+        def do_GET(self):
+            # This server's "not modified" check only looks at file times to the
+            # second, and the test deploys twice within one second. Firebase
+            # compares contents, so always send the real file here.
+            del self.headers['If-Modified-Since']
+            super().do_GET()
+
     server = http.server.ThreadingHTTPServer(('127.0.0.1', 0), functools.partial(Quiet, directory=str(site)))
     threading.Thread(target=server.serve_forever, daemon=True).start()
     yield site, f'http://127.0.0.1:{server.server_address[1]}'
@@ -74,3 +81,43 @@ def test_returning_visitor_gets_the_new_version(served_copy):
         page.goto(f'{url}/#/today')
         assert build_marker(page) == 'second'
         browser.close()
+
+
+def test_works_on_return_visits_when_the_host_redirects_index_html(tmp_path):
+    """Firebase (with clean URLs) redirected /index.html to /. A saved copy of a
+    redirected page made every visit after the first fail with a network error."""
+    site = tmp_path / 'site'
+    shutil.copytree(ROOT / 'site', site)
+    if not (site / 'data' / 'schedule.json').exists():
+        pytest.skip('run `python -m pipeline.run --offline` first to build site/data')
+
+    class Redirecting(http.server.SimpleHTTPRequestHandler):
+        def log_message(self, *args):
+            """No line per request."""
+
+        def do_GET(self):
+            if self.path.split('?')[0] == '/index.html':
+                self.send_response(301)
+                self.send_header('Location', '/')
+                self.send_header('Content-Length', '0')
+                self.end_headers()
+                return
+            super().do_GET()
+
+    server = http.server.ThreadingHTTPServer(('127.0.0.1', 0), functools.partial(Redirecting, directory=str(site)))
+    threading.Thread(target=server.serve_forever, daemon=True).start()
+    url = f'http://127.0.0.1:{server.server_address[1]}'
+    try:
+        with sync_playwright() as p:
+            browser = p.chromium.launch()
+            page = browser.new_page()
+            for visit in range(3):
+                # A new query each time forces a real page load (a #-only change wouldn't).
+                page.goto(f'{url}/?visit={visit}#/today')
+                page.wait_for_selector('#view > :not(.empty)')
+                if visit == 0:
+                    page.wait_for_function('navigator.serviceWorker.controller !== null', timeout=15000)
+            assert page.locator('.day-head, .now').count() > 0
+            browser.close()
+    finally:
+        server.shutdown()

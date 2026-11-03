@@ -115,6 +115,9 @@ async function cacheFirst(event, url) {
   const isApp = event.request.mode === 'navigate' && (url.pathname === scope || url.pathname === `${scope}index.html`);
   const key = isApp ? 'index.html' : event.request;
   const cached = await cache.match(key, { ignoreSearch: isApp });
+  // A page saved after a server redirect (/index.html -> /) can't be used to
+  // open the app: browsers reject it and show a network error. Re-wrap it.
+  if (cached?.redirected) return new Response(await cached.blob(), { headers: cached.headers });
   if (cached) return cached;
   // Not in the saved set (a 404 page, a new icon): ask the server, revalidating.
   return fetch(event.request.url, { cache: 'no-cache' });
