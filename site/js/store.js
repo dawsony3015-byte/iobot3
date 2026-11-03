@@ -7,6 +7,8 @@
  *   motion   'system' | 'reduced'
  *   textSize 'normal' | 'large'
  *   contrast 'normal' | 'high'
+ *   layout   'full' | 'compact' (Today fits on one screen)
+ *   shareUsage  false to stop sending anonymous usage counts (see usage.js)
  *   reminders  true to get a heads-up 5 minutes before each block ends
  *   tasks    [{ id, text, due: 'YYYY-MM-DD' }], the student's own to-do list
  *
@@ -17,7 +19,7 @@
 
 const KEY = 'iobot.settings.v1';
 const DEFAULTS = { grade: null, classes: {}, follows: [], theme: 'dark', motion: 'system',
-  textSize: 'normal', contrast: 'normal', reminders: false, tasks: [] };
+  textSize: 'normal', contrast: 'normal', reminders: false, tasks: [], layout: 'full', shareUsage: true };
 const listeners = new Set();
 
 export let storageWorks = true;
@@ -51,6 +53,8 @@ function clean(raw) {
     textSize: raw.textSize === 'large' ? 'large' : DEFAULTS.textSize,
     contrast: raw.contrast === 'high' ? 'high' : DEFAULTS.contrast,
     reminders: raw.reminders === true,
+    layout: raw.layout === 'compact' ? 'compact' : DEFAULTS.layout,
+    shareUsage: raw.shareUsage !== false,
     tasks: (Array.isArray(raw.tasks) ? raw.tasks : [])
       .filter((t) => t && typeof t.text === 'string' && t.text.trim() && /^\d{4}-\d{2}-\d{2}$/.test(t.due))
       .slice(0, 50)
@@ -105,7 +109,7 @@ export function exportCode() {
     f: settings.follows,
     t: settings.theme,
     m: settings.motion,
-    x: [settings.textSize, settings.contrast, settings.reminders ? 1 : 0],
+    x: [settings.textSize, settings.contrast, settings.reminders ? 1 : 0, settings.layout],
     k: settings.tasks.map((t) => [t.text, t.due]),
   };
   const bytes = new TextEncoder().encode(JSON.stringify(compact));
@@ -121,10 +125,10 @@ export function importCode(code) {
     const compact = JSON.parse(new TextDecoder().decode(bytes));
     const classes = {};
     for (const [p, [name, room, free]] of Object.entries(compact.c || {})) classes[p] = { name, room, free: Boolean(free) };
-    const [textSize, contrast, reminders] = compact.x || [];
+    const [textSize, contrast, reminders, layout] = compact.x || [];
     const tasks = (compact.k || []).map(([text, due], i) => ({ id: `imported-${i}`, text, due }));
     update({ grade: compact.g, classes, follows: compact.f, theme: compact.t, motion: compact.m,
-      textSize, contrast, reminders: Boolean(reminders), tasks });
+      textSize, contrast, reminders: Boolean(reminders), tasks, layout });
     return true;
   } catch (err) {
     return false;

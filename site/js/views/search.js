@@ -12,6 +12,7 @@ import { searchClubs } from '../search-clubs.js';
 import { searchDates } from '../search-date.js';
 import { searchBulletins } from '../search-text.js';
 import { today } from '../time.js';
+import { count } from '../usage.js';
 
 const EXAMPLES = ['next F day', 'fall break', 'next chapel', 'days until christmas break', 'chess', 'yearbook photo', 'pā'];
 
@@ -24,6 +25,13 @@ export function render(root, { route, settings }) {
   const results = h('div', { class: 'results', id: 'search-results', 'aria-live': 'polite' });
   let timer = 0;
   let run = 0;
+  const counted = new Set(); // each kind of search counts once per visit to this screen
+  const tally = (kind, found) => {
+    if (found && !counted.has(kind)) {
+      counted.add(kind);
+      count(kind);
+    }
+  };
 
   const update = async () => {
     const q = input.value.trim();
@@ -40,6 +48,9 @@ export function render(root, { route, settings }) {
     if (mine !== run) return; // the student kept typing
     const hits = searchBulletins(q, archive);
     fill(results, dateSection(dates), clubSection(clubs), bulletinSection(hits, archive));
+    tally('features.search_date', dates?.results.length);
+    tally('features.search_club', clubs.length);
+    tally('features.search_text', hits.length);
     if (!dates?.results.length && !clubs.length && !hits.length) {
       fill(results, h('p', { class: 'empty' }, `Nothing found for “${q}”. Try a date like “nov 3”, a club name, or a word from the bulletin.`));
     }

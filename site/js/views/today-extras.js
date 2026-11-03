@@ -9,6 +9,7 @@ import { dayRecord, dayTitle, isClassDay, nextClassDay } from '../schedule.js';
 import { removeTask } from '../store.js';
 import { addDays } from '../time.js';
 import { timeline } from './timeline.js';
+import { count } from '../usage.js';
 
 /* "Schedule change: Fri, Nov 6 is now E1 Schedule (1,2,3,4)." Lists changes the
    pipeline found for today and the next week, newest first. */
@@ -37,7 +38,7 @@ export function todoStrip(settings, date) {
       return h('li', { class: `todo-row${late ? ' is-late' : ''}` },
         h('span', { class: 'todo-due' }, late ? 'Overdue' : relativeDay(t.due, date).replace(/^in /, '')),
         h('span', { class: 'todo-text' }, t.text),
-        h('button', { class: 'btn btn-quiet', type: 'button', 'aria-label': `Mark ${t.text} done`, onclick: () => removeTask(t.id) }, 'Done'));
+        h('button', { class: 'btn btn-quiet', type: 'button', 'aria-label': `Mark ${t.text} done`, onclick: () => { count('features.todo_done'); removeTask(t.id); } }, 'Done'));
     })));
 }
 

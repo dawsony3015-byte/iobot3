@@ -497,3 +497,38 @@
   text-transform: uppercase;
   margin: var(--s2) 0 var(--s1);
 }
+
+/* ---- Compact layout (Me -> Today layout, or the toggle on Today) ----------- */
+
+.layout-toggle { align-self: flex-start; margin-left: auto; font-size: var(--fs-12); }
+.layout-toggle[aria-pressed='true'] { background: transparent; border-color: transparent; color: var(--ink-2); }
+:root[data-layout='compact'] { --row-h: 44px; }
+:root[data-layout='compact'] .topbar { display: none; }
+:root[data-layout='compact'] .topbar + main { padding-top: calc(var(--s3) + env(safe-area-inset-top)); }
+:root[data-layout='compact'] .day-head { margin-bottom: var(--s4); }
+:root[data-layout='compact'] .tile { width: 56px; height: 56px; font-size: 2.75rem; }
+:root[data-layout='compact'] .tile-2 { font-size: 2.1rem; }
+:root[data-layout='compact'] .tile-3, :root[data-layout='compact'] .tile-4 { font-size: 1.25rem; }
+:root[data-layout='compact'] .day-name { font-size: var(--fs-28); }
+:root[data-layout='compact'] .pchips { margin-top: var(--s3); }
+:root[data-layout='compact'] .pchip { height: 36px; font-size: 1.25rem; }
+:root[data-layout='compact'] .now { padding-bottom: var(--s4); }
+:root[data-layout='compact'] .now-title { font-size: var(--fs-28); }
+:root[data-layout='compact'] .now-detail { font-size: var(--fs-16); }
+:root[data-layout='compact'] .now-meter { margin: var(--s2) 0; }
+:root[data-layout='compact'] .cd { font-size: clamp(4rem, 21vw, 7.5rem); }
+:root[data-layout='compact'] .bar { margin-top: var(--s2); }
+:root[data-layout='compact'] .now-big { font-size: clamp(2.5rem, 12vw, 4.5rem); }
+:root[data-layout='compact'] .section { margin-top: var(--s5); }
+:root[data-layout='compact'] .daybar { margin: var(--s2) 0 var(--s3); }
+:root[data-layout='compact'] .db-ends { display: none; }
+/* Only what's still to come: finished blocks drop out of the list. */
+:root[data-layout='compact'] .is-live .tl-row.is-past { display: none; }
+:root[data-layout='compact'] .is-live .tl-marker { display: none; }
+:root[data-layout='compact'] .is-live .tl-row.is-current { background: var(--accent-tint); border-radius: var(--radius); }
+:root[data-layout='compact'] .tl-time { flex-direction: row; gap: var(--s1); }
+:root[data-layout='compact'] .tl-row { grid-template-columns: 84px 24px minmax(0, 1fr); }
+:root[data-layout='compact'] .tl-detail { display: none; }
+:root[data-layout='compact'] .food-row { padding: var(--s2) 0; }
+:root[data-layout='compact'] .freshness { margin-top: var(--s4); }
+:root[data-layout='compact'] .tl-end::before { content: '–'; }

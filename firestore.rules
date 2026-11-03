@@ -1,0 +1,31 @@
+rules_version = '2';
+
+// ʻIobot's only database use: anonymous daily usage totals (see site/js/usage.js).
+// Anyone may read the totals; writes may only add to the known counters on a
+// stats/YYYY-MM-DD document, by a small amount at a time. Nothing else in the
+// database can be read or written.
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /stats/{day} {
+      allow read: if true;
+      allow create, update: if day.matches('^20[0-9]{2}-[0-9]{2}-[0-9]{2}$')
+        && request.resource.data.keys().hasOnly(['visits', 'refreshes', 'updates', 'installed', 'views', 'features', 'devices', 'settings'])
+        && (!('views' in request.resource.data) || request.resource.data.views.keys().hasOnly(['today', 'calendar', 'day', 'search', 'clubs', 'club', 'grade', 'me']))
+        && (!('features' in request.resource.data) || request.resource.data.features.keys().hasOnly(['search_date', 'search_club', 'search_text', 'follow', 'reminders_on', 'import_classes', 'todo_add', 'todo_done', 'compact_on', 'setup_export', 'setup_import']))
+        && (!('devices' in request.resource.data) || request.resource.data.devices.keys().hasOnly(['phone', 'tablet', 'desktop']))
+        && (!('settings' in request.resource.data) || request.resource.data.settings.keys().hasOnly(['grade_set', 'dark', 'light', 'compact', 'large_text', 'high_contrast']))
+        && grewBy('visits', 50) && grewBy('refreshes', 500);
+      allow delete: if false;
+
+      // A counter may go up, never down, and only by a little per write.
+      function grewBy(field, most) {
+        let before = resource == null ? 0 : resource.data.get(field, 0);
+        let after = request.resource.data.get(field, 0);
+        return after >= before && after - before <= most;
+      }
+    }
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

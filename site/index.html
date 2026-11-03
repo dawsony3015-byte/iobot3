@@ -44,6 +44,7 @@
       if (saved.theme === 'light' || saved.theme === 'system') document.documentElement.dataset.theme = saved.theme;
       if (saved.textSize === 'large') document.documentElement.dataset.text = 'large';
       if (saved.contrast === 'high') document.documentElement.dataset.contrast = 'high';
+      if (saved.layout === 'compact') document.documentElement.dataset.layout = 'compact';
     } catch (err) {
       document.documentElement.dataset.storage = 'blocked';
     }

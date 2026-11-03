@@ -9,6 +9,7 @@ import { dateText } from '../format.js';
 import { parseClasses } from '../import-classes.js';
 import { addTask, getSettings, removeTask, update } from '../store.js';
 import { addDays, today } from '../time.js';
+import { count } from '../usage.js';
 
 /* A box to paste a whole schedule into. */
 export function classImport(onDone) {
@@ -19,13 +20,14 @@ export function classImport(onDone) {
   const message = h('p', { class: 'small', role: 'status' });
   const run = () => {
     const found = parseClasses(box.value);
-    const count = Object.keys(found).length;
-    if (!count) {
+    const periods = Object.keys(found).length;
+    if (!periods) {
       message.textContent = 'No periods found. Start each line with the period number, like “1 Chemistry I-203”.';
       return;
     }
     update({ classes: { ...getSettings().classes, ...found } });
-    message.textContent = `Filled in ${count} period${count === 1 ? '' : 's'}.`;
+    count('features.import_classes');
+    message.textContent = `Filled in ${periods} period${periods === 1 ? '' : 's'}.`;
     box.value = '';
     onDone();
   };
@@ -50,6 +52,7 @@ export function taskEditor() {
     event.preventDefault();
     if (!text.value.trim() || !due.value) return;
     addTask(text.value.trim(), due.value);
+    count('features.todo_add');
     text.value = '';
     paint();
   };
@@ -73,6 +76,7 @@ export function reminderSwitch() {
       update({ reminders: false });
     } else if (await askForNotifications()) {
       update({ reminders: true });
+      count('features.reminders_on');
       message.textContent = 'You’ll get a heads-up 5 minutes before each block ends, while ʻIobot is open.';
     } else {
       message.textContent = 'This browser didn’t allow notifications. On an iPad, add ʻIobot to your Home Screen first, then try again.';

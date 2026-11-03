@@ -284,6 +284,43 @@ def test_large_text_and_high_contrast(open_page):
     assert page.evaluate("getComputedStyle(document.documentElement).fontSize") == '19px'
 
 
+
+def test_compact_view_toggle_hides_finished_blocks(open_page):
+    page = open_page('?date=2026-10-20&time=10:00#/today')
+    page.click('.layout-toggle')
+    assert page.evaluate('document.documentElement.dataset.layout') == 'compact'
+    expect(page.locator('.tl-row.is-past').first).to_be_hidden()
+    expect(page.locator('.tl-row.is-current .tl-name')).to_have_text('Period 4')
+    expect(page.locator('.layout-toggle')).to_have_text('Full view')
+
+
+def test_usage_counts_are_never_sent_from_local_or_demo(open_page):
+    sent = []
+    page = open_page('?date=2026-10-20&time=10:00#/today')
+    page.on('request', lambda r: sent.append(r.url) if 'firestore' in r.url else None)
+    page.evaluate("document.dispatchEvent(new Event('visibilitychange'))")
+    page.wait_for_timeout(300)
+    assert sent == []
+
+
+def test_stats_page_shows_totals(open_page, site_url):
+    sample = {'documents': [
+        {'name': 'projects/iobot3/databases/(default)/documents/stats/2026-11-02',
+         'fields': {'visits': {'integerValue': '120'}, 'refreshes': {'integerValue': '900'},
+                    'installed': {'integerValue': '30'},
+                    'views': {'mapValue': {'fields': {'today': {'integerValue': '110'}, 'search': {'integerValue': '14'}}}},
+                    'features': {'mapValue': {'fields': {'search_date': {'integerValue': '9'}}}}}},
+        {'name': 'projects/iobot3/databases/(default)/documents/stats/2026-11-03',
+         'fields': {'visits': {'integerValue': '80'}}},
+    ]}
+    page = open_page('#/today')
+    page.route('https://firestore.googleapis.com/**', lambda route: route.fulfill(json=sample))
+    page.goto(f'{site_url}/stats.html')
+    page.click('#range [data-days="0"]')
+    expect(page.locator('.stat-tile').first).to_contain_text('200')
+    expect(page.locator('.ranked li').first).to_contain_text('Today')
+    expect(page.locator('.chart .bar-mark')).to_have_count(2)
+
 def test_no_console_errors():
     # Runs last in this file: every page opened above reported here.
     assert ERRORS == [], '\n'.join(sorted(set(ERRORS)))

@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>ʻIobot usage stats</title>
+  <meta name="description" content="Anonymous daily totals of how ʻIobot is used.">
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#000000">
+  <link rel="icon" href="icons/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/tokens.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/stats.css">
+  <script>
+    try {
+      const saved = JSON.parse(localStorage.getItem('iobot.settings.v1') || '{}');
+      if (saved.theme === 'light' || saved.theme === 'system') document.documentElement.dataset.theme = saved.theme;
+    } catch (err) {
+      document.documentElement.dataset.storage = 'blocked';
+    }
+  </script>
+  <script type="module" src="js/stats-page.js"></script>
+</head>
+<body>
+  <main class="stats">
+    <header class="page-head">
+      <div>
+        <h1 class="page-title">Usage stats</h1>
+        <p class="muted">Anonymous daily totals from ʻIobot. No names, no IDs, nothing anyone typed.</p>
+      </div>
+      <a class="btn" href="./">Open ʻIobot</a>
+    </header>
+    <div class="segmented" role="radiogroup" aria-label="Time range" id="range">
+      <button type="button" role="radio" data-days="7">7 days</button>
+      <button type="button" role="radio" data-days="30">30 days</button>
+      <button type="button" role="radio" data-days="0">All</button>
+    </div>
+    <div id="content"><p class="empty">Loading the numbers…</p></div>
+  </main>
+</body>
+</html>

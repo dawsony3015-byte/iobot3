@@ -10,6 +10,7 @@ import { fill, h } from '../dom.js';
 import { dateText, daysAgoText, gradesText, relativeDay } from '../format.js';
 import { getSettings, toggleFollow } from '../store.js';
 import { daysBetween, today } from '../time.js';
+import { count } from '../usage.js';
 
 const QUIET_AFTER_DAYS = 30;
 
@@ -34,6 +35,7 @@ export function render(root, { route }) {
   };
   follow.addEventListener('click', () => {
     toggleFollow(club.id);
+    if (getSettings().follows.includes(club.id)) count('features.follow');
     paintFollow();
   });
   paintFollow();

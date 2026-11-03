@@ -6,6 +6,8 @@
  * schedule), every listener is told, and the views update in place.
  */
 
+import { count } from './usage.js';
+
 const FILES = {
   schedule: 'data/schedule.json',
   today: 'data/today.json',
@@ -61,6 +63,9 @@ export async function refresh() {
   const wentOffline = offline !== data.offline;
   data.offline = offline || !navigator.onLine;
   data.checkedAt = Date.now();
+  count('refreshes');
+  if (changed.some((name) => name !== 'clubs') && data.loadedOnce) count('updates');
+  data.loadedOnce = true;
   if (changed.length || wentOffline) {
     lazy.clear(); // announcements and club pages may be out of date too
     for (const fn of listeners) fn(changed);

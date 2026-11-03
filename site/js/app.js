@@ -7,6 +7,7 @@
  */
 
 import { startAlerts } from './alerts.js';
+import { count, startUsage } from './usage.js';
 import { data, onData, refresh, startAutoRefresh } from './data.js';
 import { fadeIn, h } from './dom.js';
 import { clock, dateText } from './format.js';
@@ -67,13 +68,14 @@ async function show(soft = false) {
     root.classList.add('view-enter');
     window.scrollTo(0, 0);
   }
+  if (shown !== route.name || !soft) count(`views.${route.name}`);
   shown = route.name;
 }
 
 /* Theme, motion, text size and contrast come from Me, falling back to the
    device's own setting. */
 function applySettings() {
-  const { theme, motion, textSize, contrast } = getSettings();
+  const { theme, motion, textSize, contrast, layout } = getSettings();
   const html = document.documentElement;
   // Black is the default look, so it needs no attribute; tokens.css has the others.
   if (theme === 'dark') delete html.dataset.theme;
@@ -81,6 +83,7 @@ function applySettings() {
   const systemReduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
   html.dataset.motion = motion === 'reduced' || systemReduced ? 'reduced' : 'full';
   html.dataset.text = textSize;
+  html.dataset.layout = layout;
   const systemContrast = matchMedia('(prefers-contrast: more)').matches;
   html.dataset.contrast = contrast === 'high' || systemContrast ? 'high' : 'normal';
   const light = theme === 'light' || (theme === 'system' && matchMedia('(prefers-color-scheme: light)').matches);
@@ -120,6 +123,7 @@ async function start() {
   await show();
   startAutoRefresh();
   startAlerts();
+  startUsage();
   if ('serviceWorker' in navigator && location.protocol !== 'file:') {
     // When a new version of the app takes over this page, reload once so the
     // student sees it. (Not on the very first visit, when nothing was in control.)
@@ -134,7 +138,7 @@ async function start() {
     navigator.serviceWorker.register('sw.js', { updateViaCache: 'none' }).then((registration) => {
       // An iPad app left open for days still checks for a new version each time it's shown.
       document.addEventListener('visibilitychange', () => {
-        if (document.visibilityState === 'visible') registration.update();
+        if (document.visibilityState === 'visible') registration?.update();
       });
     }).catch(() => {
       // Offline support is a bonus; the site works the same without it.

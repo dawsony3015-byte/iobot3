@@ -1,0 +1,60 @@
+/* The usage stats page. Same tokens as the app: neutral ink for every number
+   and label, 'Iolani red only on the bars. */
+
+.stats {
+  max-width: 980px;
+  padding-top: calc(var(--s8) + env(safe-area-inset-top));
+}
+.stats #range { margin: var(--s2) 0 var(--s6); }
+
+.stat-tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: var(--s4);
+}
+.stat-tile { padding: var(--s4) 0; border-top: 2px solid var(--line-strong); }
+.stat-value {
+  font-family: var(--font-score);
+  font-weight: 700;
+  font-size: var(--fs-40);
+  line-height: 1;
+  margin: var(--s2) 0 var(--s1);
+}
+
+.chart { width: 100%; height: auto; display: block; margin-top: var(--s3); }
+.chart .grid { stroke: var(--line); stroke-width: 1; }
+.chart .axis { fill: var(--ink-3); font-size: 12px; font-family: var(--font-text); }
+.chart .bar-mark { fill: var(--line-strong); transition: fill 150ms ease; }
+.chart .bar-mark.is-today { fill: var(--accent-fill); }
+.chart .bar-mark.is-active { fill: var(--ink); }
+.chart .hit { fill: transparent; cursor: pointer; outline: none; }
+.readout { min-height: 1.5em; margin-top: var(--s2); }
+
+.stats-grid { display: grid; gap: 0 var(--s10); }
+@media (min-width: 760px) { .stats-grid { grid-template-columns: 1fr 1fr; } }
+
+.ranked { list-style: none; padding: 0; }
+.ranked li {
+  display: grid;
+  grid-template-columns: minmax(0, 11rem) minmax(0, 1fr) 3.5rem;
+  align-items: center;
+  gap: var(--s3);
+  min-height: 36px;
+  border-bottom: 1px solid var(--line);
+  font-size: var(--fs-14);
+}
+.ranked-label { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ranked-track { height: 8px; border-radius: 4px; background: var(--line); overflow: hidden; }
+.ranked-fill {
+  display: block;
+  height: 100%;
+  background: var(--accent-fill);
+  transform-origin: left center;
+  border-radius: 0 4px 4px 0;
+}
+.ranked-n { text-align: right; font-variant-numeric: tabular-nums; font-weight: 650; }
+
+.stats-table { width: 100%; border-collapse: collapse; margin-top: var(--s3); font-size: var(--fs-14); }
+.stats-table th, .stats-table td { padding: var(--s2); border-bottom: 1px solid var(--line); text-align: right; }
+.stats-table th:first-child, .stats-table td:first-child { text-align: left; }
+details > summary.label { cursor: pointer; min-height: var(--tap); display: flex; align-items: center; }

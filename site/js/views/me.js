@@ -8,6 +8,7 @@ import { data } from '../data.js';
 import { fill, h } from '../dom.js';
 import { exportCode, getSettings, importCode, storageWorks, toggleFollow, update } from '../store.js';
 import { classImport, reminderSwitch, taskEditor } from './me-extras.js';
+import { count } from '../usage.js';
 
 export function render(root) {
   const classes = h('div', {}, classTable());
@@ -25,8 +26,12 @@ export function render(root) {
     group('Clubs I follow', 'Their bulletin mentions show up under “For you” on Today.', followed()),
     group('Theme', null, choice('theme', 'Theme', [['dark', 'Black'], ['light', 'White'], ['system', 'Match device']])),
     group('Motion', 'Reduced turns off the rolling digits and sliding.', choice('motion', 'Motion', [['system', 'System'], ['reduced', 'Reduced']])),
+    group('Today layout', 'Compact fits the day on one screen: smaller header, only the blocks still to come.',
+      choice('layout', 'Today layout', [['full', 'Full'], ['compact', 'Compact']])),
     group('Text size', null, choice('textSize', 'Text size', [['normal', 'Normal'], ['large', 'Large']])),
     group('Contrast', 'High makes gray text and lines brighter.', choice('contrast', 'Contrast', [['normal', 'Normal'], ['high', 'High']])),
+    group('Share anonymous usage counts', 'Helps the team see which screens get used. Only totals like “Today opened +1”: no names, no IDs, nothing you type.',
+      choice('shareUsage', 'Share anonymous usage counts', [[true, 'On'], [false, 'Off']])),
     group('Move my setup to another device', 'Copy this code on one device, then paste it here on the other.', transfer()),
     h('p', { class: 'muted small about' }, 'ʻIobot reads the school’s bell schedule calendar and the daily bulletin. ',
       'Your settings never leave this device.'));
@@ -48,6 +53,7 @@ function choice(key, label, options) {
       type: 'button', role: 'radio', 'data-value': String(value),
       onclick: () => {
         update({ [key]: value });
+        if (key === 'layout' && value === 'compact') count('features.compact_on');
         paint();
       },
     }, text));
@@ -103,6 +109,7 @@ function transfer() {
   const message = h('p', { class: 'small', role: 'status' });
   const copy = async () => {
     out.value = exportCode();
+    count('features.setup_export');
     out.select();
     try {
       await navigator.clipboard.writeText(out.value);
@@ -113,6 +120,7 @@ function transfer() {
   };
   const use = () => {
     if (importCode(paste.value)) {
+      count('features.setup_import');
       message.textContent = 'Done. Your setup was loaded.';
       setTimeout(() => location.reload(), 600); // redraw every field with the new settings
     } else {

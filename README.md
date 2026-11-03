@@ -44,6 +44,11 @@ More screenshots, every screen at four sizes in both themes, are in
   overdue ones in red.
 - **Paste your schedule.** Paste a list like "1 Chemistry I-203" and your eight
   periods fill in.
+- **Compact view.** A denser Today that fits on one screen and shows only the
+  blocks still to come. One tap on Today, or in Me.
+- **Usage stats** at `/stats.html` (for example https://iobot3.web.app/stats.html):
+  anonymous daily totals of app opens, data checks, screens and features used,
+  devices and settings. See "Privacy" below.
 - **Large text and high contrast**, in Me (high contrast also follows the
   device's "Increase contrast" setting).
 - **Works offline** and installs to the iPad home screen.
@@ -280,6 +285,20 @@ It clears the saved offline copy, keeps the student's settings, and reopens the
 app. The site's 404 page links to it too. This exists because an early version
 saved a page in a way that blocked later visits; browsers also fix it on their
 own within 24 hours.
+
+## Privacy
+
+ʻIobot counts how it's used so the team can improve it, and counts nothing
+about who uses it. `site/js/usage.js` adds to anonymous daily totals in the
+project's Firestore database (for example "Today screen opened +1"): no
+names, no IDs, no cookies, no device fingerprint, and nothing anyone types.
+Counts are sent in one small batch every few minutes, never from demo mode or
+a local copy, and not at all when a student turns off "Share anonymous usage
+counts" in Me or the browser sends Global Privacy Control / Do Not Track.
+`firestore.rules` allows writing only those named counters, only upward, and
+nothing else in the database; `tests/test_usage.py` keeps the app's list and
+the rules in sync. The totals are public at `/stats.html`. The student's own
+settings (grade, classes, to-dos) never leave their device.
 
 ## Project layout
 

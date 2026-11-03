@@ -10,6 +10,7 @@
 import { runFrames } from '../countdown.js';
 import { bulletinFor, data } from '../data.js';
 import { fill, h } from '../dom.js';
+import { getSettings, update } from '../store.js';
 import { ago, clock, clockAt, dateText, ordinal } from '../format.js';
 import { dayTitle, isClassDay, nextClassDay, statusAt, wagonFreePeriod } from '../schedule.js';
 import { demo, hst, now, weekday } from '../time.js';
@@ -18,6 +19,7 @@ import { dayBar } from './daybar.js';
 import { NowCard } from './now.js';
 import { changeNotice, todoStrip, tomorrowPreview } from './today-extras.js';
 import { markTimeline, timeline } from './timeline.js';
+import { count } from '../usage.js';
 
 export function render(root, { settings }) {
   let status = statusAt(data.schedule, now());
@@ -121,6 +123,18 @@ function comingUp(date, settings) {
     rows.length ? h('ul', { class: 'plain-list' }, rows) : h('p', { class: 'empty' }, 'No more school days on the calendar yet.'));
 }
 
+/* Switch between the full Today screen and the compact one. */
+function layoutToggle() {
+  const compact = getSettings().layout === 'compact';
+  return h('button', {
+    class: 'btn btn-quiet layout-toggle', type: 'button', 'aria-pressed': String(compact),
+    onclick: () => {
+      if (!compact) count('features.compact_on');
+      update({ layout: compact ? 'full' : 'compact' });
+    },
+  }, compact ? 'Full view' : 'Compact');
+}
+
 /* ---- Header: day tile, date, chapel, and the period order ---------------- */
 
 function header(status, settings) {
@@ -138,7 +152,8 @@ function header(status, settings) {
         classDay ? h('p', { class: 'day-date' }, dateText(date, 'long')) : null,
         classDay ? h('h1', { class: 'day-name' }, dayTitle(day)) : h('h1', { class: 'day-date' }, dateText(date, 'long')),
         chapel ? h('p', { class: 'chapel' }, chapel) : null),
-      data.offline ? h('span', { class: 'pill offline-tag' }, 'Offline') : null),
+      data.offline ? h('span', { class: 'pill offline-tag' }, 'Offline') : null,
+      layoutToggle()),
     chips.length ? h('ol', { class: 'pchips', 'aria-label': `Period order: ${day.rotation.join(', ')}` }, chips) : null);
 
   return {

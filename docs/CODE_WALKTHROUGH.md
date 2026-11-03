@@ -59,6 +59,9 @@ a PDF.
 | `js/import-classes.js` | Turns a pasted schedule ("1 Chemistry I-203") into the eight periods | Pure function with a test for every format |
 | `js/views/today-extras.js` | Schedule-change notice, to-do strip, tomorrow preview | Kept apart so `today.js` stays short |
 | `js/views/me-extras.js` | Paste-schedule box, to-do editor, reminders switch | Same reason, for `me.js` |
+| `js/usage.js` | Anonymous usage counts, sent as one small batch every few minutes | Only named counters, never anything personal; off in demo mode, locally, or when the student says no |
+| `js/stats-page.js`, `stats.html`, `css/stats.css` | The usage stats page: headline numbers, a daily chart, ranked bars | Reads the totals straight from Firestore's public address; no SDK |
+| `firestore.rules` | What the database accepts: only the named counters, only going up | Tested against `usage.js` so the two can't drift apart |
 | `js/views/daybar.js` | The whole day drawn to scale, with a needle at "now" | Segment widths are worked out once from the block times; each frame only the needle moves, with `transform` |
 | `js/views/calendar.js`, `day.js`, `search.js`, `clubs.js`, `club.js`, `grade.js`, `me.js` | One screen each | Each is under 250 lines |
 | `js/views/day-parts.js` | Pieces shared by several screens: the day tile, lunch list, an announcement | Avoids copying the same code into three screens |
@@ -187,3 +190,9 @@ cover every case in the brief.
 **20. What would you do next?**
 Read the monthly Sodexo menus as a lunch fallback when the bulletin is late;
 confirm the official red with the school; test on the school's own iPads.
+
+**21. What do you track about students?**
+Nothing about who they are. `usage.js` only adds to daily totals like "Today
+screen opened +1" or "search used +1". No names, IDs, cookies, or anything
+typed. Students can turn it off in Me, and it's off automatically when a
+browser asks not to be tracked. The database rules reject any other field.
