@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Fixing ʻIobot</title>
+  <meta name="robots" content="noindex">
+  <!-- A repair page for a device stuck on a broken saved copy of the app.
+       It removes the saved copy (the service worker and its caches), keeps the
+       student's settings, and opens the app fresh. It's a separate page so a
+       broken saved copy of index.html can't get in its way. -->
+  <style>
+    :root { color-scheme: dark; }
+    body { margin: 0; min-height: 100dvh; display: grid; place-items: center; background: #000; color: #fff;
+      font: 18px/1.5 'Source Sans 3', 'Segoe UI', system-ui, sans-serif; padding: 24px; box-sizing: border-box; text-align: center; }
+    a { color: #ff4359; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Fixing ʻIobot…</h1>
+    <p id="status">Clearing the saved copy. Your grade, classes and to-dos stay.</p>
+  </main>
+  <script>
+    (async () => {
+      const status = document.getElementById('status');
+      try {
+        const registrations = (await navigator.serviceWorker?.getRegistrations()) || [];
+        await Promise.all(registrations.map((r) => r.unregister()));
+        const keys = (await window.caches?.keys()) || [];
+        await Promise.all(keys.map((k) => caches.delete(k)));
+        status.textContent = 'Done. Opening ʻIobot…';
+      } catch (err) {
+        status.textContent = 'Couldn’t clear everything, but opening ʻIobot anyway…';
+      }
+      setTimeout(() => location.replace('./'), 600);
+    })();
+  </script>
+  <noscript><p><a href="./">Open ʻIobot</a></p></noscript>
+</body>
+</html>

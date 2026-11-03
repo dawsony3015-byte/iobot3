@@ -121,3 +121,54 @@ def test_works_on_return_visits_when_the_host_redirects_index_html(tmp_path):
             browser.close()
     finally:
         server.shutdown()
+
+
+def test_reset_page_rescues_a_stuck_device_and_keeps_settings(tmp_path):
+    """A device that saved the broken copy before the fix can open reset.html
+    (which the broken copy can't intercept) and be back in business."""
+    site = tmp_path / 'site'
+    shutil.copytree(ROOT / 'site', site)
+    if not (site / 'data' / 'schedule.json').exists():
+        pytest.skip('run `python -m pipeline.run --offline` first to build site/data')
+    sw = site / 'sw.js'
+    fixed = sw.read_text()
+    # Recreate the old, broken service worker: no re-wrapping of redirected pages.
+    sw.write_text(re.sub(r'\n  // A page saved after a server redirect.*?\n  if \(cached\?\.redirected\)[^\n]*', '', fixed, flags=re.S))
+    assert 'cached?.redirected' not in sw.read_text()
+
+    class Redirecting(http.server.SimpleHTTPRequestHandler):
+        def log_message(self, *args):
+            """No line per request."""
+
+        def do_GET(self):
+            del self.headers['If-Modified-Since']
+            if self.path.split('?')[0] == '/index.html':
+                self.send_response(301)
+                self.send_header('Location', '/')
+                self.send_header('Content-Length', '0')
+                self.end_headers()
+                return
+            super().do_GET()
+
+    server = http.server.ThreadingHTTPServer(('127.0.0.1', 0), functools.partial(Redirecting, directory=str(site)))
+    threading.Thread(target=server.serve_forever, daemon=True).start()
+    url = f'http://127.0.0.1:{server.server_address[1]}'
+    try:
+        with sync_playwright() as p:
+            browser = p.chromium.launch()
+            context = browser.new_context()
+            page = context.new_page()
+            page.goto(f'{url}/?visit=0#/today')
+            page.wait_for_function('navigator.serviceWorker.controller !== null', timeout=15000)
+            page.evaluate("localStorage.setItem('iobot.settings.v1', JSON.stringify({grade: 11}))")
+            with pytest.raises(Exception, match='ERR_FAILED'):
+                page.goto(f'{url}/?visit=1#/today')          # stuck, like the live site was
+
+            page = context.new_page()                         # the student taps the repair link
+            page.goto(f'{url}/reset.html')
+            page.wait_for_url(re.compile(r'/$'), timeout=10000)
+            page.wait_for_selector('#view > :not(.empty)')
+            assert page.evaluate("JSON.parse(localStorage.getItem('iobot.settings.v1')).grade") == 11
+            browser.close()
+    finally:
+        server.shutdown()

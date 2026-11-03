@@ -28,11 +28,15 @@
     <h1>That page doesn’t exist.</h1>
     <p>The link might be old, or there’s a typo in the address.</p>
     <a id="home" href="/">Go to today’s schedule</a>
+    <p style="margin-top: 24px">If ʻIobot keeps saying it can’t load, <a id="reset" href="/reset.html" style="background: none; color: var(--accent); padding: 0; min-height: 0; display: inline">fix it here</a>.</p>
   </main>
   <script>
     // On a project site (username.github.io/repo/) home is the first folder, not "/".
     const first = location.pathname.split('/')[1];
-    if (location.hostname.endsWith('github.io') && first) document.getElementById('home').href = `/${first}/`;
+    if (location.hostname.endsWith('github.io') && first) {
+      document.getElementById('home').href = `/${first}/`;
+      document.getElementById('reset').href = `/${first}/reset.html`;
+    }
   </script>
 </body>
 </html>

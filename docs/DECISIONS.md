@@ -291,3 +291,36 @@ The team asked for ten more features. Seven were built; three were not, on purpo
 | Change log | The pipeline compares each calendar with the last one; changed days show on Today and the day's page for 14 days | Switching between the saved copy and the live feed isn't counted as a change |
 | Accessibility | Large text (19 px base) and high contrast (gray text at least 7:1, tested) | The countdown already speaks once a minute to screen readers |
 | Translations | **Not built** | School notices need human translators; machine translation would put errors in front of families |
+
+## 10. The "app is down" bug (Nov 3, 2026)
+
+**Symptom:** the first visit to iobot3.web.app worked; every visit after that
+showed a network error until the site was opened from the Firebase console.
+
+**Cause:** `firebase.json` had `cleanUrls: true`, which redirects
+`/index.html` to `/`. The service worker saved `index.html` while installing,
+so it saved the *redirected* response, and browsers refuse to open a page
+from a redirected response (`ERR_FAILED`).
+
+**Fix:** `cleanUrls` is off, and the service worker re-wraps any saved page
+that came through a redirect. Devices that already had the broken copy fix
+themselves within 24 hours (browsers re-check service workers at least that
+often), or immediately by opening `/reset.html`. The deploy fingerprint now
+includes `sw.js` itself, so a change to the service worker alone gets a fresh
+cache too.
+
+**Tests:** `tests/test_updates.py` recreates the redirect and makes three real
+visits (it fails on the old worker with the same `ERR_FAILED` as the live
+site), and checks that `/reset.html` rescues a stuck browser without losing
+its settings.
+
+## 11. Scheduled updates run less often than asked
+
+The workflow asks GitHub to run every 15 minutes on school days. GitHub treats
+schedules as best effort and, in practice, ran this one every 1–5 hours (for
+example, no run between 2:17 am and 8:45 am on Nov 3). Every run succeeded;
+they just didn't start. The bell times are unaffected (the whole year's
+calendar is already on the site), but a new bulletin or a same-day calendar
+edit can show up hours late. Options, all free: a time-driven Google Apps
+Script on the school account that starts the workflow every 15 minutes, or a
+cron service such as cron-job.org calling GitHub's "run workflow" API.

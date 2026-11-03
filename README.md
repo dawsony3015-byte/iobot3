@@ -273,6 +273,14 @@ account also needs the **Service Usage Viewer** role in Google Cloud IAM, or
 the deploy fails with "Permission denied to get service". `firebase.json`
 holds the hosting settings (no caching of the data files, long caching of the fonts).
 
+### If ʻIobot won't load on a device
+
+Open **/reset.html** on the site (for example `https://iobot3.web.app/reset.html`).
+It clears the saved offline copy, keeps the student's settings, and reopens the
+app. The site's 404 page links to it too. This exists because an early version
+saved a page in a way that blocked later visits; browsers also fix it on their
+own within 24 hours.
+
 ## Project layout
 
 ```

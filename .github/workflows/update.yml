@@ -107,7 +107,7 @@ jobs:
         # the code does, so open pages reload once per real update, not every
         # 15 minutes when the data refreshes.
         run: |
-          version=$(cd site && find . -type f ! -path './data/*' ! -name sw.js -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -c1-12)
+          version=$( (cd site && find . -type f ! -path './data/*' ! -name sw.js -print0 | sort -z | xargs -0 sha256sum; grep -v '^const VERSION' sw.js) | sha256sum | cut -c1-12)
           sed -i "s/^const VERSION = '[^']*';/const VERSION = '$version';/" site/sw.js
           grep -m1 "^const VERSION" site/sw.js
 
