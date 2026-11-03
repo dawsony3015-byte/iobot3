@@ -1,7 +1,7 @@
 # ʻIobot overview script
 
 A spoken walkthrough of what ʻIobot does, how it works, and why it's built
-this way. About 5–6 minutes at a normal pace. Written to be read straight to
+this way. About 7 minutes at a normal pace (about 1,050 words). Written to be read straight to
 the camera or an audience; short paragraphs so you can glance down between
 them. [Name] is a placeholder.
 
