@@ -126,6 +126,23 @@ jobs:
           KEY: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
         run: echo "present=${{ env.KEY != '' }}" >> "$GITHUB_OUTPUT"
 
+      - name: Make sure the iobot3iolani address exists
+        # The school's web filter allows addresses ending in iolani.web.app, so the
+        # site is also published as iobot3iolani.web.app. Creating it is a one-time
+        # step; on later runs Firebase says it already exists and this moves on.
+        if: steps.firebase.outputs.present == 'true'
+        env:
+          KEY: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+        run: |
+          echo "$KEY" > "$RUNNER_TEMP/firebase-key.json"
+          export GOOGLE_APPLICATION_CREDENTIALS="$RUNNER_TEMP/firebase-key.json"
+          if npx --yes firebase-tools@latest hosting:sites:get iobot3iolani --project iobot3 --non-interactive > /dev/null 2>&1; then
+            echo "iobot3iolani already exists."
+          else
+            npx --yes firebase-tools@latest hosting:sites:create iobot3iolani --project iobot3 --non-interactive
+          fi
+          rm "$RUNNER_TEMP/firebase-key.json"
+
       - name: Deploy to Firebase Hosting
         if: steps.firebase.outputs.present == 'true'
         uses: FirebaseExtended/action-hosting-deploy@v0
@@ -138,6 +155,9 @@ jobs:
       - name: Deploy the database rules (usage stats)
         # Only on pushes, when firestore.rules may have changed; scheduled runs skip it.
         if: steps.firebase.outputs.present == 'true' && github.event_name == 'push'
+        # Until the Firestore database is created in the console this step can't
+        # succeed; it must never block the site deploy above.
+        continue-on-error: true
         env:
           KEY: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
         run: |

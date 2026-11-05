@@ -46,7 +46,7 @@ More screenshots, every screen at four sizes in both themes, are in
   periods fill in.
 - **Compact view.** A denser Today that fits on one screen and shows only the
   blocks still to come. One tap on Today, or in Me.
-- **Usage stats** at `/stats.html` (for example https://iobot3.web.app/stats.html):
+- **Usage stats** at `/stats.html` (for example https://iobot3iolani.web.app/stats.html):
   anonymous daily totals of app opens, data checks, screens and features used,
   devices and settings. See "Privacy" below.
 - **Large text and high contrast**, in Me (high contrast also follows the
@@ -270,7 +270,7 @@ Things to know:
 ### Also on Firebase Hosting
 
 The same `site/` folder is deployed to Firebase Hosting on every run, as a
-second address: <https://iobot3.web.app> (project `iobot3`, free Spark plan).
+second address: <https://iobot3iolani.web.app> (project `iobot3`, free Spark plan).
 It only happens when the repository has a `FIREBASE_SERVICE_ACCOUNT` secret:
 in the Firebase console, Project settings → Service accounts → Generate new
 private key, then paste the whole JSON file as that secret. The service
@@ -280,7 +280,7 @@ holds the hosting settings (no caching of the data files, long caching of the fo
 
 ### If ʻIobot won't load on a device
 
-Open **/reset.html** on the site (for example `https://iobot3.web.app/reset.html`).
+Open **/reset.html** on the site (for example `https://iobot3iolani.web.app/reset.html`).
 It clears the saved offline copy, keeps the student's settings, and reopens the
 app. The site's 404 page links to it too. This exists because an early version
 saved a page in a way that blocked later visits; browsers also fix it on their

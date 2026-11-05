@@ -10,7 +10,7 @@ them. [Name] is a placeholder.
 ## 1. The problem
 
 Hi, I'm [name], and this is ʻIobot, a live bell schedule for ʻIolani's Upper
-School. It's at iobot3.web.app.
+School. It's at iobot3iolani.web.app.
 
 At ʻIolani, every day is different. There are A through F days, the periods
 rotate, some days have assembly or chapel, some days drop a period, and

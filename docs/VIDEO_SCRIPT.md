@@ -8,7 +8,7 @@ needed. Short paragraphs are there so you can glance down between them.
 **Intro (0:00)**
 
 Hi, I'm [name], and this is ʻIobot, a live bell schedule for ʻIolani's Upper
-School. It's published on Firebase at iobot3.web.app.
+School. It's published on Firebase at iobot3iolani.web.app.
 
 The idea is simple. You're walking between classes, you open it, and in one
 glance you know what period it is, exactly how long is left, and what's for

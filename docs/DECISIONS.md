@@ -324,3 +324,11 @@ calendar is already on the site), but a new bulletin or a same-day calendar
 edit can show up hours late. Options, all free: a time-driven Google Apps
 Script on the school account that starts the workflow every 15 minutes, or a
 cron service such as cron-job.org calling GitHub's "run workflow" API.
+
+## 12. Second address for the school filter (Nov 5, 2026)
+
+ʻIolani's web filter lets students reach addresses ending in `iolani.web.app`,
+so `iobot3.web.app` could be blocked on school devices. The same site is now
+also published as **https://iobot3iolani.web.app** (a second Firebase Hosting
+site in the same project, created by the workflow on its first run). Both
+addresses get every deploy; the new one is the one to share.
