@@ -315,7 +315,7 @@ def test_stats_page_shows_totals(open_page, site_url):
     ]}
     page = open_page('#/today')
     page.route('https://firestore.googleapis.com/**', lambda route: route.fulfill(json=sample))
-    page.goto(f'{site_url}/stats.html')
+    page.goto(f'{site_url}/stats.html?date=2026-11-03')  # pin "today" so the bar count is fixed
     page.click('#range [data-days="0"]')
     expect(page.locator('.stat-tile').first).to_contain_text('200')
     expect(page.locator('.ranked li').first).to_contain_text('Today')
